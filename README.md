@@ -1,6 +1,6 @@
 # Simulador de riego y riesgo de plagas para jitomate (Morelos)
 
-Demo del hackatón Industria 5.0. La versión entregable es `simulador-v3.html`: se abre en el navegador, sin servidor ni instalación. `index.html` tiene exactamente el mismo contenido (es la copia que sirve GitHub Pages en la URL raíz del repo) para que el enlace público muestre el MVP completo sin tener que apuntar a un archivo específico.
+Demo del hackatón Industria 5.0. La versión entregable es `index.html`: se abre en el navegador, sin servidor ni instalación, y es el mismo archivo que sirve GitHub Pages en la URL raíz del repo. Tiene botón para cambiar entre modo claro y oscuro.
 
 **Demo en vivo:** https://gleipm.github.io/HackatonInsustria5/
 
@@ -31,7 +31,7 @@ La pestaña "Supuestos" de la vista Técnico etiqueta cada parámetro como méto
 
 ## Entregables
 
-- `simulador-v3.html`: MVP funcional sin servidor.
+- `index.html`: MVP funcional sin servidor.
 - `fuentes.md`: cifras, parámetros, etiquetas `[V]`, `[S]` y `[P]`, y procedimiento para SIAP/INEGI.
 - `pitch-jitomate-atento.pptx`: 8 láminas ordenadas para la rúbrica.
 - `guion-pitch.md`: guion de 3 minutos.

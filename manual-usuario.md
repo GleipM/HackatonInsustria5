@@ -1,6 +1,6 @@
 # Manual de usuario: Mi lote de jitomate
 
-Guía de uso de `simulador-v3.html`, el simulador de riego y riesgo de plagas para jitomate del valle Cuautla–Ayala–Yautepec, Morelos.
+Guía de uso de `index.html`, el simulador de riego y riesgo de plagas para jitomate del valle Cuautla–Ayala–Yautepec, Morelos.
 
 > **Antes de empezar:** esta es una demostración. El clima, algunos conteos y la humedad pueden ser datos de ejemplo. Ningún número de esta pantalla es una medición real de tu parcela hasta que lo confirmes con datos propios. La herramienta nunca recomienda un agroquímico: cuando hay una alerta, solo dice que hay que revisar el cultivo.
 
@@ -8,11 +8,11 @@ Guía de uso de `simulador-v3.html`, el simulador de riego y riesgo de plagas pa
 
 No necesita instalación ni internet para funcionar (solo la primera vez, para cargar la letra). Pasos:
 
-1. Busca el archivo `simulador-v3.html` en la carpeta del proyecto.
+1. Busca el archivo `index.html` en la carpeta del proyecto.
 2. Haz doble clic sobre él, o ábrelo arrastrándolo a una ventana del navegador (Chrome, Edge o Safari).
-3. Se abre directamente en la vista **Soy productor**. Arriba a la derecha puedes cambiar a **Soy técnico** y viceversa, las veces que quieras.
+3. Se abre directamente en la vista **Soy productor**. Arriba a la derecha puedes cambiar a **Soy técnico** y viceversa, las veces que quieras. Junto a ese selector hay un botón con ícono de luna o sol para cambiar entre modo claro y modo oscuro; tu elección se recuerda la próxima vez que abras el archivo.
 
-Funciona igual en celular y en computadora. En celular, las tarjetas se acomodan en una sola columna.
+Funciona igual en celular y en computadora. En celular, las tarjetas se acomodan en una sola columna; en pantallas de laptop o escritorio, varias tarjetas de la vista productor se acomodan en dos columnas para aprovechar el espacio.
 
 ---
 
@@ -178,6 +178,6 @@ La pestaña de la transparencia. Muestra:
 
 ---
 
-## Nota sobre `index.html`
+## Demo en vivo
 
-`index.html` tiene exactamente el mismo contenido que `simulador-v3.html`: es la copia que GitHub Pages sirve en la URL pública del repositorio (https://gleipm.github.io/HackatonInsustria5/), para que el enlace raíz muestre el MVP completo sin tener que apuntar a un archivo específico. Puedes usar cualquiera de los dos indistintamente.
+`index.html` es también el archivo que GitHub Pages publica en https://gleipm.github.io/HackatonInsustria5/, así que puedes compartir ese enlace en vez del archivo.
