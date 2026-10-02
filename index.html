@@ -143,6 +143,9 @@ td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
 .chartbox svg{width:100%;height:auto;display:block;min-width:520px}
 .tl{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:6px;font-size:15px;color:var(--muted)}
 .params{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin-top:12px}
+.fieldbox{border:2px solid var(--line);border-radius:14px;padding:12px;margin-top:14px;background:var(--field)}
+.fieldbox h3{font-size:18px;margin-bottom:4px}.fieldbox .form{margin-top:8px}
+.metric{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}.metric div{background:var(--field);border:1px solid var(--line);border-radius:12px;padding:10px}.metric b{display:block;font-size:24px}
 .tag{font-size:13px;font-weight:700;padding:1px 8px;border-radius:6px}
 .tag.s{background:var(--warn-soft);color:var(--warn)}.tag.p{background:var(--bad-soft);color:var(--bad)}.tag.v{background:var(--leaf-soft);color:var(--ok)}
 .reco{border:3px solid var(--warn);border-radius:14px;padding:16px;margin-top:6px}
@@ -269,6 +272,19 @@ td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
       <p class="msg" id="csvmsg" role="status"></p>
       <p class="msg">Una fila por día, con encabezado: <b>fecha</b> (aaaa-mm-dd o dd/mm/aaaa), <b>tmax</b> y <b>tmin</b> en °C, <b>lluvia</b> en mm y, opcional, <b>hr</b> (%). Separador coma, punto y coma o tabulador.</p>
     </div>
+    <div class="fieldbox">
+      <h3>Humedad medida (opcional)</h3>
+      <p class="msg">Captura humedad volumétrica o del tensiómetro convertida a porcentaje de agua disponible. Si la marcas como ejemplo, el modelo la usa para corregir el día elegido.</p>
+      <label class="f">Agua disponible observada (%)
+        <input id="soilMeasured" type="number" min="0" max="100" step="1" placeholder="Ej. 62">
+        <small id="soilMeasuredState">Sin medición para este día.</small>
+      </label>
+      <button class="btn ghost small" id="soilSave" type="button">Guardar medición</button>
+    </div>
+    <label class="f">Modo de riego
+      <select id="riegoModo"><option value="goteo">Goteo: pequeño y frecuente</option><option value="balance">Balance hídrico: relleno por evento</option></select>
+      <small>El goteo de esta demo es una aproximación; calibra caudal y duración en campo.</small>
+    </label>
     <label class="f">Fecha de trasplante
       <input type="date" id="start">
     </label>
@@ -310,6 +326,17 @@ td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
       <h2 style="font-size:22px">Riesgo de plagas y enfermedades</h2>
       <p class="sub" style="margin:6px 0 14px">Índices de 0 a 100 con temperatura y lluvia de los últimos días. Los umbrales son de ejemplo y deben revisarse con un fitopatólogo. Una alerta solo dice que hay que monitorear.</p>
       <div class="table-scroll" id="chartPl"></div><div class="tl" id="legPl"></div>
+      <div class="fieldbox">
+        <h3>Conteo de trampas del día</h3>
+        <p class="msg">Dato opcional. Escribe individuos observados en la trampa del día seleccionado. No confirma una plaga por sí solo.</p>
+        <div class="form">
+          <label class="f">Tizón: plantas con síntomas<input class="trapInput" data-trap="tiz" type="number" min="0" step="1" placeholder="0"></label>
+          <label class="f">Mosquita: individuos/trampa<input class="trapInput" data-trap="mos" type="number" min="0" step="1" placeholder="0"></label>
+          <label class="f">Palomilla: capturas/trampa<input class="trapInput" data-trap="tuta" type="number" min="0" step="1" placeholder="0"></label>
+        </div>
+        <button class="btn ghost small" id="trapSave" type="button">Guardar conteos</button>
+        <div id="trapMetrics"></div>
+      </div>
       <h3 style="font-size:19px;margin:16px 0 6px">Alertas del ciclo</h3>
       <div class="table-scroll"><table id="alertas"></table></div>
     </section>
@@ -353,12 +380,12 @@ const DEF={lat:18.8,Lini:30,Ldev:40,Lmid:45,Llate:30,Kcini:.6,Kcmid:1.15,Kcend:.
 const SUELOS={arenoso:50,franco:80,arcilloso:110},RIEGOS={goteo:85,aspersion:75,surco:60};
 const PDEF=[
  ["lat","Latitud (°N)",.1,"v","Cuautla está cerca de 18.8 °N; sirve para la radiación extraterrestre."],
- ["Lini","Etapa inicial (días)",1,"p","Duraciones de referencia tipo FAO-56, escritas de memoria; confirmar con las tablas 11 y 12 o con INIFAP."],
- ["Ldev","Desarrollo (días)",1,"p","Ídem."],["Lmid","Etapa media (días)",1,"p","Ídem."],["Llate","Etapa final (días)",1,"p","Ídem."],
- ["Kcini","Kc inicial",.05,"p","Coeficiente de referencia tipo FAO-56 para jitomate; confirmar con INIFAP para Morelos."],
- ["Kcmid","Kc de etapa media",.05,"p","Ídem."],["Kcend","Kc final",.05,"p","Ídem."],
- ["p","Agotamiento permisible (fracción)",.05,"p","Fracción del agua del suelo que se puede gastar sin estrés; referencia FAO-56, por confirmar."],
- ["Ky","Sensibilidad al estrés (Ky)",.05,"p","Relación rendimiento-agua de Doorenbos y Kassam; 1.05 es de referencia, por confirmar."],
+ ["Lini","Etapa inicial (días)",1,"v","FAO-56, Tabla 11: tomate, ejemplo de clima árido, 30 días; validar con fenología local."],
+ ["Ldev","Desarrollo (días)",1,"v","FAO-56, Tabla 11: tomate, ejemplo de clima árido, 40 días; validar localmente."],["Lmid","Etapa media (días)",1,"v","FAO-56, Tabla 11: tomate, ejemplo de clima árido, 40 días; validar localmente."],["Llate","Etapa final (días)",1,"v","FAO-56, Tabla 11: tomate, ejemplo de clima árido, 25 días; validar localmente."],
+ ["Kcini","Kc inicial",.05,"v","FAO-56, Tabla 12: tomate, Kc inicial 0.60; el ajuste por frecuencia de mojado sigue pendiente."],
+ ["Kcmid","Kc de etapa media",.05,"v","FAO-56, Tabla 12: tomate, Kc medio 1.15; el ajuste climático local sigue pendiente."],["Kcend","Kc final",.05,"v","FAO-56, Tabla 12: tomate, Kc final 0.70-0.90; v3 usa 0.80 como punto de referencia."],
+ ["p","Agotamiento permisible (fracción)",.05,"p","FAO-56, capítulo 8 define RAW=p×TAW; 0.40 es arranque editable, no validación de Morelos."],
+ ["Ky","Sensibilidad al estrés (Ky)",.05,"p","1.05 se conserva del prototipo; no se localizó una tabla verificable específica para jitomate Morelos."],
  ["rainEff","Lluvia efectiva (fracción)",.05,"s","Parte de la lluvia que llega a la zona de raíces."],
  ["rainMin","Lluvia mínima útil (mm)",1,"s","Debajo de este valor se ignora la lluvia."],
  ["trigger","Umbral del riego de balance (× agotamiento permisible)",.05,"s","1 riega cuando se llega justo al límite sin estrés."],
@@ -372,7 +399,7 @@ const PDEF=[
  ["tutaBase","Palomilla del tomate: temperatura base (°C)",1,"s","Ídem; el índice usa grados-día."],
  ["tutaRef","Palomilla del tomate: grados-día diarios del ritmo máximo",1,"s","Ídem. El índice es el avance de los últimos 14 días frente a este ritmo máximo."]];
 
-const S={mode:"prod",clima:"normal",start:"2026-10-15",system:"campo",p:Object.assign({},DEF),csv:null,costo:0,day:60,log:[],clim:[],sim:{},pl:{},alerts:[],tab:"riego"};
+const S={mode:"prod",clima:"normal",start:"2026-10-15",system:"campo",riegoMode:"goteo",p:Object.assign({},DEF),csv:null,costo:0,day:60,log:[],clim:[],sim:{},pl:{},alerts:[],soilObs:{},traps:{},tab:"riego"};
 const $=id=>document.getElementById(id);
 const nf=(n,d=0)=>Number(n).toLocaleString("es-MX",{minimumFractionDigits:d,maximumFractionDigits:d});
 const fmtD=d=>d.toLocaleDateString("es-MX",{day:"numeric",month:"short"});
@@ -445,15 +472,17 @@ function prep(){
   c.eto=Math.max(0,.0023*(c.tmean+17.8)*Math.sqrt(Math.max(c.tmax-c.tmin,0))*Ra(doy(c.date),P.lat))*(inv?P.invFactor:1);
   c.kc=kcAt(i,P);c.etc=c.kc*c.eto;c.pe=(inv||c.rain<P.rainMin)?0:c.rain*P.rainEff});
  S.clim=clim;const sim={};["cal","bal","def"].forEach(k=>sim[k]=simulate(k,clim,P));
- S.sim=sim;S.pl=plague(clim,P);S.alerts=findAlerts();
+ sim.drip=simulate("drip",clim,P);S.sim=sim;S.pl=plague(clim,P);S.alerts=findAlerts();
 }
 function simulate(kind,clim,P){
  const TAW=P.TAW,RAW=P.p*TAW,Ea=P.Ea/100;let Dr=0;const R={Dr:[],Dr0:[],irr:[],Ks:[]};
  let water=0,eta=0,etc=0,stress=0,perc=0,events=0;
  clim.forEach((c,i)=>{
+  if(kind!=="cal"&&Number.isFinite(S.soilObs[i]))Dr=TAW*(1-S.soilObs[i]/100);
   const Dr0=Dr;let irr=0;
   if(kind==="cal"){if(i%Math.max(1,Math.round(P.calDays))===0)irr=P.calDepth}
   else if(kind==="bal"){if(Dr0>=RAW*P.trigger)irr=Dr0}
+  else if(kind==="drip"){if(Dr0>=RAW*.65)irr=Math.min(Math.max(c.etc*1.1,2),RAW*.65)}
   else{if(Dr0>=P.defTrig*TAW)irr=Dr0}
   const Dre=Dr0-irr;if(Dre<0)perc+=-Dre;const D1=Math.max(0,Dre);
   const Ks=D1<=RAW?1:Math.max(0,(TAW-D1)/(TAW-RAW)),ea=Ks*c.etc;
@@ -495,7 +524,7 @@ function findAlerts(){
  return out.sort((x,y)=>x.from-y.from);
 }
 function recoData(){
- const i=clamp(S.day,0,S.clim.length-1),c=S.clim[i],b=S.sim.bal,P=S.p,RAW=P.p*P.TAW,Ea=P.Ea/100,dr=b.Dr0[i],irr=b.irr[i];
+ const i=clamp(S.day,0,S.clim.length-1),c=S.clim[i],b=S.riegoMode==="goteo"?S.sim.drip:S.sim.bal,P=S.p,RAW=P.p*P.TAW,Ea=P.Ea/100,dr=b.Dr0[i],irr=b.irr[i];
  const left=Math.max(0,RAW*P.trigger-dr),dias=(irr===0&&c.etc>0)?Math.max(1,Math.ceil(left/c.etc)):null;
  const items=["tiz","mos","tuta"].map(k=>({k,v:S.pl[k][i],c:cat(S.pl[k][i])})).sort((a,b)=>b.v-a.v);
  return {i,c,dr,irr,dias,Ea,RAW,items,hi:items.filter(x=>x.c==="alto")};
@@ -585,23 +614,32 @@ function chart(o){
  s+=`<line x1="${x(mi)}" x2="${x(mi)}" y1="${t}" y2="${H-b}" stroke="var(--ink)" stroke-width="1.4"/><text x="${x(mi)}" y="${t+10}" text-anchor="${mi>n*.8?"end":"start"}" dx="${mi>n*.8?-4:4}" font-size="11" fill="var(--ink)">día ${mi+1}</text>`;
  return s+"</svg>";
 }
-const SNAME={cal:"Calendario del productor",bal:"Balance hídrico",def:"Riego deficitario"},SCOL={cal:"var(--c-cal)",bal:"var(--c-bal)",def:"var(--c-def)"},SDASH={cal:"7 5",bal:"",def:"2 4"};
+const SNAME={cal:"Calendario del productor",bal:"Balance hídrico",def:"Riego deficitario",drip:"Goteo frecuente"},SCOL={cal:"var(--c-cal)",bal:"var(--c-bal)",def:"var(--c-def)",drip:"var(--leaf)"},SDASH={cal:"7 5",bal:"",def:"2 4",drip:"1 2"};
 function renderRiegoT(){
- const {cal,bal,def}=S.sim,maxW=Math.max(cal.water,bal.water,def.water,1),ahorro=k=>cal.water>0?(cal.water-S.sim[k].water)/cal.water*100:0;
+ const {cal,bal,def,drip}=S.sim,maxW=Math.max(cal.water,bal.water,def.water,drip.water,1),ahorro=k=>cal.water>0?(cal.water-S.sim[k].water)/cal.water*100:0;
  $("tabla").innerHTML=`<tr><th>Estrategia</th><th>Agua bombeada (m³/ha)</th><th>Frente al calendario</th><th>Riegos</th><th>Días con estrés</th><th>Rendimiento relativo estimado</th><th>Percolación (mm)</th></tr>`+
- ["cal","bal","def"].map(k=>{const r=S.sim[k];return `<tr><td><span class="sw" style="border-color:${SCOL[k]};${SDASH[k]?"border-top-style:dashed":""}"></span>${SNAME[k]}</td><td class="num">${nf(r.water)}<span class="bar" style="width:${(r.water/maxW*100).toFixed(0)}%;background:${SCOL[k]}"></span></td><td class="num">${k==="cal"?"Referencia":(ahorro(k)>=0?"−":"+")+nf(Math.abs(ahorro(k)),1)+"%"}</td><td class="num">${r.events}</td><td class="num">${r.stress}</td><td class="num">${nf(r.relYield*100)}%</td><td class="num">${nf(r.perc)}</td></tr>`}).join("");
+ ["cal","bal","drip","def"].map(k=>{const r=S.sim[k];return `<tr><td><span class="sw" style="border-color:${SCOL[k]};${SDASH[k]?"border-top-style:dashed":""}"></span>${SNAME[k]}</td><td class="num">${nf(r.water)}<span class="bar" style="width:${(r.water/maxW*100).toFixed(0)}%;background:${SCOL[k]}"></span></td><td class="num">${k==="cal"?"Referencia":(ahorro(k)>=0?"−":"+")+nf(Math.abs(ahorro(k)),1)+"%"}</td><td class="num">${r.events}</td><td class="num">${r.stress}</td><td class="num">${nf(r.relYield*100)}%</td><td class="num">${nf(r.perc)}</td></tr>`}).join("");
  const dAg=ahorro("bal"),dY=(bal.relYield-cal.relYield)*100;
  $("riegoLead").innerHTML=`Con este clima, el balance hídrico usa <b>${nf(Math.abs(dAg),1)}% ${dAg>=0?"menos":"más"} agua</b> que el calendario del productor y deja el rendimiento relativo estimado en <b>${nf(bal.relYield*100)}%</b> (${Math.abs(dY)<.05?"igual que el calendario":nf(Math.abs(dY),1)+" puntos "+(dY>=0?"por encima":"por debajo")+" del calendario"}). El ahorro depende del calendario supuesto.`;
- const P=S.p,RAW=P.p*P.TAW,maxDr=Math.max(...["cal","bal","def"].flatMap(k=>S.sim[k].Dr)),ymax=Math.min(P.TAW,Math.max(10,Math.ceil(Math.max(RAW*1.5,maxDr*1.05)/10)*10));
- $("chartDr").innerHTML=chart({n:S.clim.length,ymax,label:"Agotamiento de agua por estrategia a lo largo del ciclo",series:["cal","bal","def"].map(k=>({data:S.sim[k].Dr,color:SCOL[k],dash:SDASH[k]})),hlines:[{v:RAW,label:`límite sin estrés (${nf(RAW)} mm)`}]});
- $("legDr").innerHTML=["cal","bal","def"].map(k=>`<span><span class="sw" style="border-color:${SCOL[k]};${SDASH[k]?"border-top-style:dashed":""}"></span>${SNAME[k]}</span>`).join("")+`<span>Eje vertical: agotamiento en mm</span>`;
+ const P=S.p,RAW=P.p*P.TAW,maxDr=Math.max(...["cal","bal","def","drip"].flatMap(k=>S.sim[k].Dr)),ymax=Math.min(P.TAW,Math.max(10,Math.ceil(Math.max(RAW*1.5,maxDr*1.05)/10)*10));
+ $("chartDr").innerHTML=chart({n:S.clim.length,ymax,label:"Agotamiento de agua por estrategia a lo largo del ciclo",series:["cal","bal","drip","def"].map(k=>({data:S.sim[k].Dr,color:SCOL[k],dash:SDASH[k]})),hlines:[{v:RAW,label:`límite sin estrés (${nf(RAW)} mm)`}]});
+ $("legDr").innerHTML=["cal","bal","drip","def"].map(k=>`<span><span class="sw" style="border-color:${SCOL[k]};${SDASH[k]?"border-top-style:dashed":""}"></span>${SNAME[k]}</span>`).join("")+`<span>Eje vertical: agotamiento en mm</span>`;
 }
 function renderPlagasT(){
  const P=S.p;
  $("chartPl").innerHTML=chart({n:S.clim.length,ymax:100,label:"Índices de riesgo de plagas a lo largo del ciclo",bands:[{from:0,to:P.medT,fill:"var(--band-ok)"},{from:P.medT,to:P.altoT,fill:"var(--band-warn)"},{from:P.altoT,to:100,fill:"var(--band-bad)"}],series:["tiz","mos","tuta"].map((k,i)=>({data:S.pl[k],color:PCOL[k],dash:["","7 5","2 4"][i]})),hlines:[{v:P.altoT,label:`alerta (${P.altoT})`}]});
  $("legPl").innerHTML=["tiz","mos","tuta"].map((k,i)=>`<span><span class="sw" style="border-color:${PCOL[k]};${["","border-top-style:dashed","border-top-style:dotted"][i]}"></span>${PNAMES[k]}</span>`).join("");
+ renderTrapInputs();
  if(!S.alerts.length){$("alertas").innerHTML=`<tr><td>Ningún índice llegó al umbral de alerta en este ciclo.</td></tr>`;return}
  $("alertas").innerHTML=`<tr><th>Plaga o enfermedad</th><th>Desde</th><th>Hasta</th><th>Días</th><th>Índice máximo</th><th>Qué hacer</th></tr>`+S.alerts.map(a=>`<tr><td>${PNAMES[a.k]}</td><td>${fmtD(S.clim[a.from].date)}</td><td>${fmtD(S.clim[a.to].date)}</td><td class="num">${a.to-a.from+1}</td><td class="num">${nf(a.peak)}</td><td>Monitorear trampas u hojas en las 48 horas siguientes</td></tr>`).join("");
+}
+function renderTrapInputs(){
+ const day=S.traps[S.day]||{};
+ document.querySelectorAll(".trapInput").forEach(e=>e.value=day[e.dataset.trap]==null?"":day[e.dataset.trap]);
+ const rows=Object.keys(S.traps).flatMap(i=>Object.keys(S.traps[i]).map(k=>({i:+i,k,count:S.traps[i][k]})));
+ if(!rows.length){$("trapMetrics").innerHTML=`<p class="msg">Aún no hay conteos guardados. La precisión y cobertura aparecerán aquí.</p>`;return}
+ const metrics=["tiz","mos","tuta"].map(k=>{const vals=rows.filter(x=>x.k===k),tp=vals.filter(x=>x.count>0&&S.pl[k][x.i]>=S.p.altoT).length,fp=vals.filter(x=>x.count===0&&S.pl[k][x.i]>=S.p.altoT).length,fn=vals.filter(x=>x.count>0&&S.pl[k][x.i]<S.p.altoT).length;return `<div><b>${PNAMES[k]}</b>Precisión ${tp+fp?nf(tp/(tp+fp)*100):"—"}%<br>Cobertura ${tp+fn?nf(tp/(tp+fn)*100):"—"}%</div>`});
+ $("trapMetrics").innerHTML=`<div class="metric">${metrics.join("")}</div><p class="msg">Cálculo exploratorio sobre los conteos capturados: positivo = conteo mayor que 0 y alerta = índice mayor o igual a ${nf(S.p.altoT)}. No es validación científica.</p>`;
 }
 function renderRecoT(){
  const d=recoData(),P=S.p,c=d.c,e=logEntry(d.i),cl={ok:"ok",bajo:"ok",medio:"warn",alto:"bad"};
@@ -615,14 +653,20 @@ function renderRecoT(){
   <p class="msg" style="margin-top:10px">Nunca se recomienda un agroquímico: una alerta solo dice que hay que monitorear.</p>
   <div class="actions"><button class="btn" id="bval" type="button">Validar recomendación</button><button class="btn ghost" id="brech" type="button">Rechazar</button></div></div>`;
  $("bval").onclick=()=>setEstado("Validada");$("brech").onclick=()=>setEstado("Rechazada");
- if(!S.log.length){$("bitacora").innerHTML=`<tr><td>Aún no hay registros. Valida o rechaza la recomendación del día, o espera a que el productor anote su riego.</td></tr>`;$("usoReco").textContent="";return}
+ if(!S.log.length){$("bitacora").innerHTML=`<tr><td>Aún no hay registros. Valida o rechaza la recomendación del día, o espera a que el productor anote su riego.</td></tr>`;$("usoReco").textContent="";renderCycleSummary();return}
  $("bitacora").innerHTML=`<tr><th>Fecha</th><th>Riego recomendado</th><th>Plagas</th><th>Decisión del técnico</th><th>Lo que anotó el productor</th></tr>`+S.log.map(x=>`<tr><td>${fmtD(x.date)}</td><td>${esc(x.riego)}</td><td>${x.plaga}</td><td>${x.estado}</td><td class="num">${x.aplicado==null?"—":nf(x.aplicado)+" L/m²"}</td></tr>`).join("");
  const dec=S.log.filter(x=>x.estado!=="Pendiente"),v=dec.filter(x=>x.estado==="Validada").length;
  $("usoReco").textContent=dec.length?`Uso de la recomendación: ${nf(v/dec.length*100)}% validadas (${v} de ${dec.length} decididas). En el piloto este registro serviría para calibrar el modelo; en la demo no se guarda.`:"";
+ renderCycleSummary();
+}
+function renderCycleSummary(){
+ $("cycleSummary")?.remove();
+ const r=S.riegoMode==="goteo"?S.sim.drip:S.sim.bal,ah=S.sim.cal.water-r.water;
+ $("usoReco").insertAdjacentHTML("afterend",`<div class="fieldbox" id="cycleSummary"><h3>Resumen del ciclo</h3><div class="metric"><div><b>${nf(r.water)} m³/ha</b>agua usada en ${S.riegoMode==="goteo"?"goteo":"balance"}</div><div><b>${ah>=0?"−":"+"}${nf(Math.abs(ah))} m³/ha</b>${ah>=0?"ahorro":"diferencia"} frente al calendario</div><div><b>${r.stress}</b>días con estrés · ${S.alerts.length} alertas emitidas</div></div><p class="msg">Resumen calculado con datos ${S.clima==="csv"?"cargados por CSV":"de ejemplo"}. No representa resultados de producción.</p></div>`);
 }
 function setEstado(estado){const d=recoData(),e=ensureEntry(d);e.estado=estado;renderAll()}
 function renderSupT(){
- const rows=[["Evapotranspiración de referencia (ETo)","v","Método de Hargreaves–Samani con temperaturas diarias; calibración local pendiente."],["Balance de agua en la zona de raíces","v","Balance diario con agotamiento permisible, método estándar de la FAO."],["Rendimiento relativo","p","Relación lineal de Doorenbos y Kassam con Ky de referencia; sirve para comparar estrategias, no para predecir cosecha."],["Kc, duración de etapas y p","p","Valores de referencia de la literatura, no verificados contra tablas ni contra INIFAP en esta demo."],["Clima","s","Sintético para ejemplo, o el CSV que cargues. Sustituir por datos de una estación cercana (SMN o CONAGUA)."],["Calendario del productor","s","Supuesto de la demo; sin entrevista a productores."],["Suelo y eficiencia de riego","s","Valores de ejemplo por tipo de suelo y de riego; medir en la parcela."],["Índices de plagas y umbrales","s","Reglas sencillas de temperatura y lluvia, sin calibrar ni comparar con conteos de trampas. Revisión pendiente de un fitopatólogo."]];
+ const rows=[["Evapotranspiración de referencia (ETo)","v","Método de Hargreaves–Samani con temperaturas diarias; calibración local pendiente."],["Balance de agua en la zona de raíces","v","Balance diario con agotamiento permisible, método estándar de la FAO."],["Rendimiento relativo","p","Relación lineal de Doorenbos y Kassam con Ky de referencia; sirve para comparar estrategias, no para predecir cosecha."],["Kc y etapas","v","Referencia FAO-56, Tablas 11 y 12; validar variedad, fecha y manejo local."],["p y Ky","p","p=0.40 y Ky=1.05 son editables; falta validación local y fuente INIFAP específica."],["Clima","s","Sintético para ejemplo, o el CSV que cargues. Sustituir por datos de una estación cercana (SMN o CONAGUA)."],["Calendario del productor","s","Supuesto de la demo; sin entrevista a productores."],["Sensor y eficiencia de riego","s","La humedad es captura manual y la eficiencia es ejemplo; medir en la parcela."],["Índices de plagas y umbrales","s","Reglas sencillas de temperatura y lluvia; conteos y fitopatología pendientes."]];
  const lab={v:"Método",s:"Ejemplo",p:"Por confirmar"};
  $("supTabla").innerHTML=`<tr><th>Componente</th><th>Estado</th><th>Detalle</th></tr>`+rows.map(r=>`<tr><td>${r[0]}</td><td><span class="tag ${r[1]}">${lab[r[1]]}</span></td><td>${r[2]}</td></tr>`).join("");
 }
@@ -642,6 +686,8 @@ function syncInputs(){
  set("start",S.start);set("pStart",S.start);set("clima",S.clima);set("pClima",S.clima);set("sistema",S.system);set("pSistema",S.system);
  set("pSuelo",Object.keys(SUELOS).find(k=>SUELOS[k]===S.p.TAW)||"custom");set("pRiego",Object.keys(RIEGOS).find(k=>RIEGOS[k]===S.p.Ea)||"custom");
  set("pCosto",S.costo>0?S.costo:"");
+ set("riegoModo",S.riegoMode);set("soilMeasured",Number.isFinite(S.soilObs[S.day])?S.soilObs[S.day]:"");
+ $("soilMeasuredState").textContent=Number.isFinite(S.soilObs[S.day])?"Medición guardada; corrige el modelo en este día.":"Sin medición para este día.";
  document.querySelectorAll(".pin").forEach(inp=>{if(document.activeElement!==inp)inp.value=S.p[inp.dataset.k]});
 }
 function renderAll(){
@@ -664,6 +710,8 @@ const setSys=v=>{S.system=v;S.log=[];render()};
 $("sistema").onchange=e=>setSys(e.target.value);$("pSistema").onchange=e=>setSys(e.target.value);
 $("pSuelo").onchange=e=>{if(SUELOS[e.target.value]){S.p.TAW=SUELOS[e.target.value];S.log=[];render()}};
 $("pRiego").onchange=e=>{if(RIEGOS[e.target.value]){S.p.Ea=RIEGOS[e.target.value];S.log=[];render()}};
+$("riegoModo").onchange=e=>{S.riegoMode=e.target.value;S.log=[];render()};
+$("soilSave").onclick=()=>{const v=parseFloat($("soilMeasured").value);if(Number.isFinite(v)&&v>=0&&v<=100){S.soilObs[S.day]=v;S.log=[];render()}};
 $("pCosto").oninput=e=>{const v=parseFloat(e.target.value);S.costo=isNaN(v)||v<0?0:v;renderProd()};
 $("pDay").oninput=e=>{S.day=+e.target.value;renderAll()};
 $("day").oninput=e=>{S.day=+e.target.value;renderAll()};
@@ -671,6 +719,7 @@ $("pPrev").onclick=()=>{S.day=Math.max(0,S.day-1);renderAll()};
 $("pNext").onclick=()=>{S.day=Math.min(S.clim.length-1,S.day+1);renderAll()};
 $("pSemana").onclick=e=>{const b=e.target.closest("[data-d]");if(b){S.day=+b.dataset.d;renderAll();const t=$("pDate");if(t.scrollIntoView)t.scrollIntoView({block:"center"})}};
 $("pRegistro").onclick=e=>{if(!e.target.closest("#pGuardar"))return;const v=parseFloat($("pAplicado").value);const d=recoData(),en=ensureEntry(d);en.aplicado=isNaN(v)||v<0?0:v;renderAll()};
+$("trapSave").onclick=()=>{const row={};document.querySelectorAll(".trapInput").forEach(e=>{const v=parseFloat(e.value);if(Number.isFinite(v)&&v>=0)row[e.dataset.trap]=v});if(Object.keys(row).length){S.traps[S.day]=row;renderAll()}};
 $("csvfile").onchange=e=>{const f=e.target.files&&e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{$("csvtext").value=String(r.result);useCSV()};r.readAsText(f)};
 $("csvuse").onclick=useCSV;
 function useCSV(){

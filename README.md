@@ -1,6 +1,8 @@
 # Simulador de riego y riesgo de plagas para jitomate (Morelos)
 
-Demo del hackatón Industria 5.0. La versión entregable es `simulador-v3.html`: se abre en el navegador, sin servidor ni instalación. `index.html` es el prototipo original disponible en la carpeta; no se encontró un archivo separado llamado `simulador-v2.html`.
+Demo del hackatón Industria 5.0. La versión entregable es `simulador-v3.html`: se abre en el navegador, sin servidor ni instalación. `index.html` tiene exactamente el mismo contenido (es la copia que sirve GitHub Pages en la URL raíz del repo) para que el enlace público muestre el MVP completo sin tener que apuntar a un archivo específico.
+
+**Demo en vivo:** https://gleipm.github.io/HackatonInsustria5/
 
 Zona de ejemplo: valle de Cuautla–Ayala–Yautepec, Morelos. Cultivo: jitomate.
 
