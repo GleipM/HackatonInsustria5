@@ -38,6 +38,15 @@ button,input,select,textarea{font:inherit;color:inherit}
 .seg button{border:0;background:none;padding:12px 18px;min-height:48px;cursor:pointer;font-weight:700;color:var(--muted)}
 .seg button[aria-pressed="true"]{background:var(--water);color:var(--on-water)}
 .iconbtn{width:48px;min-height:48px;padding:0;border-radius:14px}
+.acctchip{display:flex;align-items:center;gap:8px;font-weight:700;font-size:15px}
+/* cuenta local (acceso) */
+.authwrap{max-width:480px}
+.authcard{padding:22px}
+.atabs{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0}
+.atabs button{flex:1;border:2px solid var(--line);background:var(--surface);padding:10px 16px;min-height:46px;border-radius:12px;font-weight:700;cursor:pointer;color:var(--ink)}
+.atabs button[aria-selected="true"]{background:var(--water);color:var(--on-water);border-color:var(--water)}
+.atab{margin-top:16px}
+.acctbtn{width:100%;justify-content:flex-start;text-align:left;margin-bottom:8px;gap:10px}
 .note{display:flex;gap:12px;align-items:flex-start;background:var(--warn-soft);border:2px solid var(--warn);border-radius:14px;padding:12px 14px;font-size:16px;margin-bottom:16px}
 .note .ic{color:var(--warn);width:24px;height:24px}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:16px;box-shadow:var(--shadow);min-width:0}
@@ -144,7 +153,7 @@ td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
 .sw{display:inline-block;width:26px;height:0;border-top:3px solid;vertical-align:middle;margin-right:8px}
 .bar{display:block;height:6px;border-radius:3px;margin-top:5px}
 .chartbox{margin-top:16px}.chartbox h3{font-size:19px;margin-bottom:2px}
-.chartbox svg{width:100%;height:auto;display:block;min-width:520px}
+.chartbox .table-scroll svg{width:100%;height:auto;display:block;min-width:520px}
 .tl{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:6px;font-size:15px;color:var(--muted)}
 .params{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin-top:12px}
 .fieldbox{border:2px solid var(--line);border-radius:14px;padding:12px;margin-top:14px;background:var(--field)}
@@ -189,9 +198,66 @@ td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2.5M12 19.5V22M4.2 4.2l1.8 1.8M18 18l1.8 1.8M2 12h2.5M19.5 12H22M4.2 19.8L6 18M18 6l1.8-1.8"/></symbol>
  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20.5 14.7A8.5 8.5 0 1 1 9.3 3.5a6.8 6.8 0 0 0 11.2 11.2z"/></symbol>
+ <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c1.4-4.2 4.4-6.5 8-6.5s6.6 2.3 8 6.5"/></symbol>
 </svg>
 
-<div class="wrap" id="wrap">
+<div class="wrap authwrap" id="authWrap">
+  <div class="topbar" style="justify-content:center">
+    <div class="brand"><svg class="ic" aria-hidden="true"><use href="#i-leaf"/></svg><span>Mi lote de jitomate</span></div>
+  </div>
+  <div class="card authcard">
+    <div class="note"><svg class="ic" aria-hidden="true"><use href="#i-info"/></svg><p><b>Cuenta local de esta demostración.</b> Tus datos se guardan solo en este navegador (sin servidor ni cifrado). No uses una contraseña que uses en otros sitios: el PIN de 4 dígitos solo distingue tu perfil en este aparato.</p></div>
+    <div class="atabs" role="tablist" aria-label="Acceso a la cuenta">
+      <button role="tab" id="at-login" data-atab="login" aria-selected="true" type="button">Iniciar sesión</button>
+      <button role="tab" id="at-register" data-atab="register" aria-selected="false" type="button">Crear cuenta</button>
+    </div>
+
+    <section id="atab-login" class="atab">
+      <div id="acctList"></div>
+      <p class="msg" id="noAccMsg" hidden>Todavía no hay cuentas guardadas en este aparato. Crea una en la pestaña "Crear cuenta".</p>
+      <div id="pinBox" hidden style="margin-top:10px">
+        <label class="f">PIN de <span id="pinForName"></span>
+          <input id="pinInput" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="••••">
+        </label>
+        <p class="msg bad" id="pinMsg" role="status"></p>
+        <div style="display:flex;flex-wrap:wrap;gap:10px">
+          <button class="btn" id="pinSubmit" type="button">Entrar</button>
+          <button class="btn ghost" id="pinCancel" type="button">Cancelar</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="atab-register" class="atab" hidden>
+      <div class="form">
+        <label class="f full">Tu nombre
+          <input id="regNombre" type="text" autocomplete="name" placeholder="Ej. María López">
+        </label>
+        <label class="f full">Nombre del rancho o lote principal
+          <input id="regRancho" type="text" placeholder="Ej. Rancho El Jitomatal">
+        </label>
+        <label class="f">Hectáreas totales
+          <input id="regHectareas" type="number" min="0.1" step="0.1" inputmode="decimal" placeholder="Ej. 2.5">
+        </label>
+        <label class="f">Número de lotes
+          <input id="regLotes" type="number" min="1" step="1" inputmode="numeric" placeholder="Ej. 3">
+          <small>Esta demostración simula un lote a la vez.</small>
+        </label>
+        <label class="f">Crea un PIN (4 dígitos)
+          <input id="regPin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="••••">
+        </label>
+        <label class="f">Confirma el PIN
+          <input id="regPin2" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="••••">
+        </label>
+      </div>
+      <p class="msg bad" id="regMsg" role="status"></p>
+      <button class="btn" id="regSubmit" type="button">Crear cuenta y entrar</button>
+    </section>
+
+    <p style="margin-top:18px;text-align:center"><button class="btn ghost small" id="guestEnter" type="button">Seguir sin cuenta</button></p>
+  </div>
+</div>
+
+<div class="wrap" id="wrap" hidden>
 <div class="topbar">
   <div class="brand"><svg class="ic" aria-hidden="true"><use href="#i-leaf"/></svg><span>Mi lote de jitomate</span></div>
   <div class="topctrls">
@@ -202,6 +268,12 @@ td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
     <button id="themeToggle" class="btn ghost iconbtn" type="button" aria-label="Cambiar a modo oscuro">
       <svg class="ic" aria-hidden="true"><use href="#i-moon" id="themeIconUse"/></svg>
     </button>
+    <div class="acctchip" id="acctChip" hidden>
+      <svg class="ic sm" aria-hidden="true"><use href="#i-user"/></svg>
+      <span id="acctChipName"></span>
+      <button id="acctLogout" class="btn ghost small" type="button">Salir</button>
+    </div>
+    <button id="acctCreateBtn" class="btn ghost small" type="button" hidden>Crear cuenta</button>
   </div>
 </div>
 <div class="note"><svg class="ic" aria-hidden="true"><use href="#i-info"/></svg><p><b>Demostración con datos de ejemplo.</b> Los números no son mediciones de tu lote. Tu técnico debe confirmar cada recomendación antes de que la sigas.</p></div>
@@ -611,10 +683,12 @@ function renderProd(){
  else if(dW<=-.03*cal.water){msg=`En este ciclo tu calendario se queda corto: con el riego recomendado usas <b>${nf(-dW)} m³ más por hectárea</b>, pero la planta no pasa sed ${dY>.5?"y la cosecha estimada mejora":""}.`;cls="color:var(--warn)"}
  else msg=`Tu forma de regar y la recomendada gastan casi lo mismo.`;
  const pesos=S.costo>0&&dW>0?`<p class="big">Son unos $${nf(dW*S.costo)} menos en agua por hectárea.</p>`:"";
+ const acc=currentAcc();
+ const totalHa=(acc&&acc.hectareas>0&&dW>=.03*cal.water)?`<p class="eq">Para tus <b>${nf(acc.hectareas,1)} ha</b> registradas, serían unos <b>${nf(dW*acc.hectareas)} m³ menos en total</b>${acc.lotes>1?` (tienes ${acc.lotes} lotes registrados; esta demo simula uno a la vez)`:""}.</p>`:"";
  $("pAhorro").innerHTML=`<h2>¿Cuánta agua te ahorras?</h2><p class="sub">En todo el ciclo, por hectárea.</p>
   <div class="sbar"><div class="lab"><span>Como riegas normalmente</span><span>${nf(cal.water)} m³</span></div><div class="track"><div class="fill" style="width:${cal.water/mx*100}%;background:var(--c-cal)"></div></div></div>
   <div class="sbar"><div class="lab"><span>Con la recomendación</span><span>${nf(bal.water)} m³</span></div><div class="track"><div class="fill" style="width:${bal.water/mx*100}%;background:var(--c-bal)"></div></div></div>
-  <p style="margin-top:14px;${cls}">${msg}</p>${dW>=.03*cal.water?`<p class="eq">Es como ${nf(dW/10)} pipas de 10,000 litros.</p>`:""}${pesos}
+  <p style="margin-top:14px;${cls}">${msg}</p>${dW>=.03*cal.water?`<p class="eq">Es como ${nf(dW/10)} pipas de 10,000 litros.</p>`:""}${pesos}${totalHa}
   <p class="eq" style="margin-top:10px">El ahorro depende de cómo riegas hoy. Si cambias los datos de tu lote, la cuenta se actualiza.</p>`;
  /* registro */
  const ap=e&&e.aplicado!=null?e.aplicado:null,defv=d.irr>0?Math.round(d.irr):0;
@@ -770,6 +844,88 @@ function applyTheme(){
 }
 $("themeToggle").onclick=()=>{writeTheme(effectiveTheme()==="dark"?"light":"dark");applyTheme()};
 applyTheme();
+
+/* ---------- cuenta local (demo, sin servidor ni cifrado) ---------- */
+function loadAcc(){try{const d=JSON.parse(localStorage.getItem("jitomateAccounts"));return d&&d.accounts?d:{accounts:[],sessionId:null}}catch(e){return {accounts:[],sessionId:null}}}
+function saveAcc(d){try{localStorage.setItem("jitomateAccounts",JSON.stringify(d))}catch(e){}}
+let ACC=loadAcc();
+function accById(id){return ACC.accounts.find(a=>a.id===id)||null}
+function currentAcc(){return accById(ACC.sessionId)}
+function accUid(){return "a"+Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
+
+function renderAcctList(){
+ const box=$("acctList");
+ if(!ACC.accounts.length){box.innerHTML="";$("noAccMsg").hidden=false;return}
+ $("noAccMsg").hidden=true;
+ box.innerHTML=ACC.accounts.map(a=>`<button class="btn ghost acctbtn" data-acc="${a.id}" type="button">${ic("user","sm")} ${esc(a.nombre)} · ${esc(a.rancho||"Sin nombre de rancho")}</button>`).join("");
+}
+function showPinBox(id){
+ const a=accById(id);if(!a)return;
+ $("pinBox").hidden=false;$("pinForName").textContent=a.nombre;$("pinInput").value="";$("pinMsg").textContent="";
+ $("pinBox").dataset.acc=id;$("pinInput").focus();
+}
+$("acctList").onclick=e=>{const b=e.target.closest("[data-acc]");if(b)showPinBox(b.dataset.acc)};
+$("pinCancel").onclick=()=>{$("pinBox").hidden=true};
+$("pinSubmit").onclick=()=>{
+ const id=$("pinBox").dataset.acc,a=accById(id),v=$("pinInput").value.trim();
+ if(a&&v===a.pin){ACC.sessionId=id;saveAcc(ACC);enterApp()}
+ else{$("pinMsg").textContent="PIN incorrecto. Intenta de nuevo."}
+};
+$("pinInput").addEventListener("keydown",e=>{if(e.key==="Enter")$("pinSubmit").click()});
+
+document.querySelectorAll("#authWrap .atabs button").forEach(b=>b.onclick=()=>{
+ document.querySelectorAll("#authWrap .atabs button").forEach(x=>x.setAttribute("aria-selected",x===b));
+ document.querySelectorAll("#authWrap .atab").forEach(s=>s.hidden=(s.id!=="atab-"+b.dataset.atab));
+});
+
+$("regSubmit").onclick=()=>{
+ const nombre=$("regNombre").value.trim(),rancho=$("regRancho").value.trim();
+ const ha=parseFloat($("regHectareas").value),lotes=parseInt($("regLotes").value,10);
+ const pin=$("regPin").value.trim(),pin2=$("regPin2").value.trim();
+ const msg=$("regMsg");
+ if(!nombre){msg.textContent="Escribe tu nombre.";return}
+ if(!(ha>0)){msg.textContent="Escribe las hectáreas totales (mayor que 0).";return}
+ if(!(lotes>=1)){msg.textContent="Escribe el número de lotes (al menos 1).";return}
+ if(!/^\d{4}$/.test(pin)){msg.textContent="El PIN debe tener exactamente 4 dígitos.";return}
+ if(pin!==pin2){msg.textContent="Los dos PIN no coinciden.";return}
+ msg.textContent="";
+ const acc={id:accUid(),nombre,rancho,hectareas:ha,lotes,pin,creado:new Date().toISOString().slice(0,10)};
+ ACC.accounts.push(acc);ACC.sessionId=acc.id;saveAcc(ACC);
+ enterApp();
+};
+
+$("guestEnter").onclick=()=>{ACC.sessionId=null;enterApp()};
+$("acctLogout").onclick=()=>{ACC.sessionId=null;saveAcc(ACC);showAuth()};
+$("acctCreateBtn").onclick=()=>showAuth();
+
+function showAuth(){
+ $("wrap").hidden=true;$("authWrap").hidden=false;
+ renderAcctList();
+ document.querySelectorAll("#authWrap .atabs button").forEach(x=>x.setAttribute("aria-selected",String(x.dataset.atab==="login")));
+ document.querySelectorAll("#authWrap .atab").forEach(s=>s.hidden=(s.id!=="atab-login"));
+ $("pinBox").hidden=true;
+}
+
+function updateAcctChip(){
+ const a=currentAcc();
+ $("acctChip").hidden=!a;
+ $("acctCreateBtn").hidden=!!a;
+ if(a)$("acctChipName").textContent=a.nombre;
+}
+
+function enterApp(){
+ $("authWrap").hidden=true;$("wrap").hidden=false;
+ updateAcctChip();
+ render();
+}
+
+renderAcctList();
+if(!ACC.accounts.length){
+ document.querySelectorAll("#authWrap .atabs button").forEach(x=>x.setAttribute("aria-selected",String(x.dataset.atab==="register")));
+ document.querySelectorAll("#authWrap .atab").forEach(s=>s.hidden=(s.id!=="atab-register"));
+}
+if(currentAcc()){$("authWrap").hidden=true;$("wrap").hidden=false}
+updateAcctChip();
 
 renderParams();bindPins();render();
 </script>

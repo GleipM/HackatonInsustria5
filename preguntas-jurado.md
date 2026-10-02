@@ -29,3 +29,6 @@
 
 10. **¿Cómo escalan el MVP?**
     Primero se valida con pocas parcelas y técnicos: clima oficial, humedad medida, riego aplicado, fenología, conteos y cosecha. Después se versionan los parámetros por zona y cultivo, se agrega almacenamiento seguro y se evalúa el modelo por temporada. No se debe escalar una regla sin calibración.
+
+11. **¿El login y la cuenta son seguros?**
+    No, y lo decimos explícitamente en la propia pantalla. Es una cuenta local de la demo: nombre, rancho, hectáreas, lotes y PIN de 4 dígitos se guardan sin cifrar en el navegador del dispositivo, sin servidor. Sirve para mostrar cómo el simulador personalizaría la experiencia por productor (por ejemplo, el ahorro total según hectáreas registradas). Un piloto real necesita autenticación en servidor, contraseñas con hash, y cumplimiento de protección de datos personales.

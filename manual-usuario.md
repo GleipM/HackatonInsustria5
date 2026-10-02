@@ -14,6 +14,18 @@ No necesita instalación ni internet para funcionar (solo la primera vez, para c
 
 Funciona igual en celular y en computadora. En celular, las tarjetas se acomodan en una sola columna; en pantallas de laptop o escritorio, varias tarjetas de la vista productor se acomodan en dos columnas para aprovechar el espacio.
 
+## Tu cuenta
+
+Antes de entrar, el simulador pide iniciar sesión o crear una cuenta:
+
+- **Crear cuenta:** pide tu nombre, el nombre del rancho o lote principal, las hectáreas totales, el número de lotes que manejas y un PIN de 4 dígitos.
+- **Iniciar sesión:** toca tu nombre en la lista y escribe tu PIN.
+- **Seguir sin cuenta:** si solo quieres probar el simulador, usa el botón "Seguir sin cuenta" y entras directo, sin registrarte.
+
+> **Importante:** esta es una cuenta local de la demostración, no un sistema de inicio de sesión real. Tu nombre, rancho, hectáreas, lotes y PIN se guardan solo en este navegador, sin servidor ni cifrado — no uses un PIN ni una contraseña que uses en otro lugar. Un uso real necesitaría autenticación segura en un servidor.
+
+Las hectáreas que registras se usan en la sección "¿Cuánta agua te ahorras?" para mostrar el ahorro total estimado para todo tu lote, no solo por hectárea. El número de lotes es informativo: esta demostración simula un lote a la vez, no varios al mismo tiempo. Puedes cerrar tu sesión con el botón "Salir" junto a tu nombre, en la esquina superior derecha.
+
 ---
 
 ## Parte 1: Vista "Soy productor"
@@ -150,7 +162,7 @@ La pestaña de la transparencia. Muestra:
 
 **¿Necesito internet?** Solo para que cargue la tipografía la primera vez. El cálculo funciona sin conexión.
 
-**¿Se guardan mis datos si cierro la pestaña?** No. Esta es una demostración: cada vez que abres el archivo, empieza de cero. Para un uso real habría que agregar guardado de datos.
+**¿Se guardan mis datos si cierro la pestaña?** Solo tu cuenta (nombre, rancho, hectáreas, número de lotes y PIN) y tu modo claro/oscuro se guardan en este navegador, para que no tengas que volver a registrarte. El ciclo de simulación (el día en el que ibas, lo que validaste, lo que anotaste en "Mi riego de hoy") no se guarda: cada vez que abres el archivo, el ciclo empieza de cero. Para un uso real habría que agregar un guardado completo, en un servidor y con seguridad real.
 
 **¿Puedo usar mis propios datos de clima?** Sí, con un archivo CSV desde la vista técnico (ver la tabla del panel izquierdo arriba). Si no tienes uno, usa los climas de ejemplo, pero recuerda que no son mediciones reales.
 
