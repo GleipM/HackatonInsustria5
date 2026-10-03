@@ -38,3 +38,4 @@ La pestaña "Supuestos" de la vista Técnico etiqueta cada parámetro como méto
 - `pitch-jitomate-atento.pptx`: 8 láminas ordenadas para la rúbrica.
 - `guion-pitch.md`: guion de 3 minutos.
 - `preguntas-jurado.md`: preguntas difíciles y respuestas honestas.
+- `plan-despliegue.md`: arquitectura PWA, consultas de IA por foto, capacidad para 50-200 usuarios, seguridad, fases y pruebas.
