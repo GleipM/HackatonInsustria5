@@ -8,6 +8,7 @@ Zona de ejemplo: valle de Cuautla–Ayala–Yautepec, Morelos. Cultivo: jitomate
 
 ## Qué hace
 
+- **Cuenta y lotes:** landing page → inicio de sesión con correo y contraseña (cuenta local del navegador, sin servidor) → pestaña **Resumen** (los lotes que más necesitan atención hoy: riego o riesgo de plagas) y pestaña **Mis lotes** (alta, edición y baja de lotes con sus propios datos). El selector de cultivo ya incluye nopal, caña y maíz, deshabilitados, para mostrar que el sistema puede crecer; solo jitomate tiene simulación activa.
 - **Vista Productor:** responde en lenguaje sencillo si hoy toca regar y cuánta agua aplicar, muestra el agua que queda en el suelo, el nivel de riesgo de plagas, los próximos 7 días y cuánta agua se ahorra frente al calendario del productor.
 - **Vista Técnico:** compara calendario, balance hídrico, riego deficitario y goteo frecuente; acepta CSV de clima, captura humedad medida y conteos de trampas, muestra precisión/cobertura exploratorias y resume agua, ahorro, estrés y alertas.
 - **Revisión humana:** toda recomendación queda como "pendiente de validación" hasta que el técnico la valide. La herramienta nunca recomienda un agroquímico.
@@ -33,6 +34,7 @@ La pestaña "Supuestos" de la vista Técnico etiqueta cada parámetro como méto
 
 - `index.html`: MVP funcional sin servidor.
 - `fuentes.md`: cifras, parámetros, etiquetas `[V]`, `[S]` y `[P]`, y procedimiento para SIAP/INEGI.
+- `manual-usuario.md` / `manual-usuario.pdf`: guía de uso para productor y técnico.
 - `pitch-jitomate-atento.pptx`: 8 láminas ordenadas para la rúbrica.
 - `guion-pitch.md`: guion de 3 minutos.
-- `preguntas-jurado.md`: 10 preguntas difíciles y respuestas honestas.
+- `preguntas-jurado.md`: preguntas difíciles y respuestas honestas.

@@ -8,23 +8,35 @@ Guía de uso de `index.html`, el simulador de riego y riesgo de plagas para jito
 
 No necesita instalación ni internet para funcionar (solo la primera vez, para cargar la letra). Pasos:
 
-1. Busca el archivo `index.html` en la carpeta del proyecto.
-2. Haz doble clic sobre él, o ábrelo arrastrándolo a una ventana del navegador (Chrome, Edge o Safari).
-3. Se abre directamente en la vista **Soy productor**. Arriba a la derecha puedes cambiar a **Soy técnico** y viceversa, las veces que quieras. Junto a ese selector hay un botón con ícono de luna o sol para cambiar entre modo claro y modo oscuro; tu elección se recuerda la próxima vez que abras el archivo.
+1. Busca el archivo `index.html` en la carpeta del proyecto y ábrelo en Chrome, Edge o Safari (doble clic, o arrástralo a una ventana del navegador).
+2. Verás una pantalla de bienvenida (landing) con tres puntos de qué hace la herramienta. Toca **"Ver mis lotes"**.
+3. Inicia sesión con tu correo y una contraseña. Si es la primera vez que usas ese correo en este aparato, la cuenta se crea sola en ese mismo paso — no hay un formulario de registro aparte.
+4. Entras a **Resumen**, con tus lotes. Arriba a la derecha hay un botón con ícono de luna o sol para cambiar entre modo claro y modo oscuro; tu elección se recuerda la próxima vez que abras el archivo.
 
 Funciona igual en celular y en computadora. En celular, las tarjetas se acomodan en una sola columna; en pantallas de laptop o escritorio, varias tarjetas de la vista productor se acomodan en dos columnas para aprovechar el espacio.
 
 ## Tu cuenta
 
-Antes de entrar, el simulador pide iniciar sesión o crear una cuenta:
+> **Importante:** es una cuenta local de la demostración, no un sistema de inicio de sesión real. Tu correo y contraseña se guardan solo en este navegador, sin servidor ni cifrado — no uses una contraseña que uses en otro lugar. Un uso real necesitaría autenticación segura en un servidor.
 
-- **Crear cuenta:** pide tu nombre, el nombre del rancho o lote principal, las hectáreas totales, el número de lotes que manejas y un PIN de 4 dígitos.
-- **Iniciar sesión:** toca tu nombre en la lista y escribe tu PIN.
-- **Seguir sin cuenta:** si solo quieres probar el simulador, usa el botón "Seguir sin cuenta" y entras directo, sin registrarte.
+- **Iniciar sesión / crear cuenta:** es el mismo paso. Escribe tu correo y una contraseña (mínimo 4 caracteres); si ese correo ya se usó antes en este aparato, debes escribir la misma contraseña.
+- **Seguir sin cuenta:** si solo quieres probar el simulador sin guardar nada, usa ese botón en la pantalla de acceso y entras directo a la demostración de un solo lote (la que ya conocías).
+- **Salir:** botón junto a tu correo, en la esquina superior derecha, para cerrar tu sesión.
 
-> **Importante:** esta es una cuenta local de la demostración, no un sistema de inicio de sesión real. Tu nombre, rancho, hectáreas, lotes y PIN se guardan solo en este navegador, sin servidor ni cifrado — no uses un PIN ni una contraseña que uses en otro lugar. Un uso real necesitaría autenticación segura en un servidor.
+## Resumen (pantalla de inicio)
 
-Las hectáreas que registras se usan en la sección "¿Cuánta agua te ahorras?" para mostrar el ahorro total estimado para todo tu lote, no solo por hectárea. El número de lotes es informativo: esta demostración simula un lote a la vez, no varios al mismo tiempo. Puedes cerrar tu sesión con el botón "Salir" junto a tu nombre, en la esquina superior derecha.
+Al entrar con una cuenta ves dos pestañas:
+
+- **Resumen:** muestra tus lotes de jitomate ordenados por lo que más urge revisar hoy — primero los que necesitan riego, luego por nivel de riesgo de plagas (alto, medio, bajo). Usa el clima de ejemplo y la fecha real de hoy de tu aparato para ubicar en qué día del ciclo va cada lote. Toca una tarjeta para abrir ese lote.
+- **Mis lotes:** la lista completa de tus lotes con botón **"+ Agregar lote"** y **"Editar"** en cada uno.
+
+### Registrar o editar un lote
+
+El formulario pide: nombre del lote, cultivo, municipio, hectáreas, sistema de producción, tipo de suelo, cómo riegas, fecha de siembra o trasplante y notas opcionales.
+
+El selector de cultivo ya incluye **jitomate, nopal, caña de azúcar y maíz** — pero solo jitomate se puede elegir. Los demás aparecen marcados "(próximamente)" y no se pueden seleccionar: están ahí para mostrar que el sistema está pensado para crecer a otros cultivos de Morelos, no porque ya tengan un modelo de riego y plagas calibrado. Activarlos de verdad necesita trabajar con un agrónomo especialista en cada cultivo, para no mostrar números inventados.
+
+Las hectáreas del lote se usan en la sección "¿Cuánta agua te ahorras?" del simulador para mostrar el ahorro total estimado de ese lote, no solo por hectárea.
 
 ---
 
@@ -162,7 +174,7 @@ La pestaña de la transparencia. Muestra:
 
 **¿Necesito internet?** Solo para que cargue la tipografía la primera vez. El cálculo funciona sin conexión.
 
-**¿Se guardan mis datos si cierro la pestaña?** Solo tu cuenta (nombre, rancho, hectáreas, número de lotes y PIN) y tu modo claro/oscuro se guardan en este navegador, para que no tengas que volver a registrarte. El ciclo de simulación (el día en el que ibas, lo que validaste, lo que anotaste en "Mi riego de hoy") no se guarda: cada vez que abres el archivo, el ciclo empieza de cero. Para un uso real habría que agregar un guardado completo, en un servidor y con seguridad real.
+**¿Se guardan mis datos si cierro la pestaña?** Tu cuenta (correo, contraseña y tus lotes) y tu modo claro/oscuro se guardan en este navegador, para que no tengas que volver a registrar todo. El ciclo de simulación dentro de un lote (el día en el que ibas, lo que validaste, lo que anotaste en "Mi riego de hoy") no se guarda: cada vez que abres un lote, el ciclo empieza de cero. Para un uso real habría que agregar un guardado completo, en un servidor y con seguridad real.
 
 **¿Puedo usar mis propios datos de clima?** Sí, con un archivo CSV desde la vista técnico (ver la tabla del panel izquierdo arriba). Si no tienes uno, usa los climas de ejemplo, pero recuerda que no son mediciones reales.
 

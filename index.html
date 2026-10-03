@@ -45,6 +45,11 @@ button,input,select,textarea{font:inherit;color:inherit}
 .atabs{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0}
 .atabs button{flex:1;border:2px solid var(--line);background:var(--surface);padding:10px 16px;min-height:46px;border-radius:12px;font-weight:700;cursor:pointer;color:var(--ink)}
 .atabs button[aria-selected="true"]{background:var(--water);color:var(--on-water);border-color:var(--water)}
+.hometabs{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 16px}
+.hometabs button{flex:1;border:2px solid var(--line);background:var(--surface);padding:12px 16px;min-height:48px;border-radius:14px;font-weight:700;cursor:pointer;color:var(--ink)}
+.hometabs button[aria-selected="true"]{background:var(--water);color:var(--on-water);border-color:var(--water)}
+.dashrow{width:100%;justify-content:flex-start;text-align:left;margin-bottom:10px;gap:12px}
+.dashrow .sub{font-size:14px}
 .atab{margin-top:16px}
 .acctbtn{width:100%;justify-content:flex-start;text-align:left;margin-bottom:8px;gap:10px}
 .note{display:flex;gap:12px;align-items:flex-start;background:var(--warn-soft);border:2px solid var(--warn);border-radius:14px;padding:12px 14px;font-size:16px;margin-bottom:16px}
@@ -201,66 +206,142 @@ td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c1.4-4.2 4.4-6.5 8-6.5s6.6 2.3 8 6.5"/></symbol>
 </svg>
 
-<div class="wrap authwrap" id="authWrap">
+<!-- ====== LANDING ====== -->
+<div class="wrap" id="landingWrap">
+  <div class="topbar">
+    <div class="brand"><svg class="ic" aria-hidden="true"><use href="#i-leaf"/></svg><span>Mi lote de jitomate</span></div>
+    <button id="themeToggle3" class="btn ghost iconbtn" type="button" aria-label="Cambiar a modo oscuro">
+      <svg class="ic" aria-hidden="true"><use href="#i-moon" id="themeIconUse3"/></svg>
+    </button>
+  </div>
+  <div class="card" style="text-align:center">
+    <h1 style="font-size:28px">Riego y plagas, sin adivinar</h1>
+    <p class="sub" style="font-size:17px;margin-top:10px">Simulador para jitomate del valle Cuautla–Ayala–Yautepec, Morelos — pensado para crecer a nopal, elote y otros cultivos de exportación de la región.</p>
+    <button class="btn" id="landingStart" type="button" style="margin-top:18px">Ver mis lotes</button>
+  </div>
+  <div class="card">
+    <div style="display:flex;gap:14px;align-items:flex-start;margin-bottom:16px"><svg class="ic lg" aria-hidden="true" style="color:var(--water)"><use href="#i-drop"/></svg><div><b>Sabes si hoy toca regar</b><p class="sub">Y cuánta agua, en litros por m² o en pipas, comparado contra tu calendario de siempre.</p></div></div>
+    <div style="display:flex;gap:14px;align-items:flex-start;margin-bottom:16px"><svg class="ic lg" aria-hidden="true" style="color:var(--bad)"><use href="#i-bug"/></svg><div><b>Vigilas plagas sin adivinar</b><p class="sub">Avisos de monitoreo para tizón tardío, mosquita blanca y palomilla del tomate; nunca receta un producto.</p></div></div>
+    <div style="display:flex;gap:14px;align-items:flex-start"><svg class="ic lg" aria-hidden="true" style="color:var(--leaf)"><use href="#i-check"/></svg><div><b>Tu técnico valida todo</b><p class="sub">Ninguna recomendación llega al productor como definitiva sin que un técnico la revise primero.</p></div></div>
+  </div>
+  <div class="note"><svg class="ic" aria-hidden="true"><use href="#i-info"/></svg><p><b>Demostración con datos de ejemplo.</b></p></div>
+</div>
+
+<!-- ====== ACCESO: INICIAR SESIÓN / CREAR CUENTA ====== -->
+<div class="wrap authwrap" id="authWrap" hidden>
   <div class="topbar" style="justify-content:center">
     <div class="brand"><svg class="ic" aria-hidden="true"><use href="#i-leaf"/></svg><span>Mi lote de jitomate</span></div>
   </div>
   <div class="card authcard">
-    <div class="note"><svg class="ic" aria-hidden="true"><use href="#i-info"/></svg><p><b>Cuenta local de esta demostración.</b> Tus datos se guardan solo en este navegador (sin servidor ni cifrado). No uses una contraseña que uses en otros sitios: el PIN de 4 dígitos solo distingue tu perfil en este aparato.</p></div>
-    <div class="atabs" role="tablist" aria-label="Acceso a la cuenta">
-      <button role="tab" id="at-login" data-atab="login" aria-selected="true" type="button">Iniciar sesión</button>
-      <button role="tab" id="at-register" data-atab="register" aria-selected="false" type="button">Crear cuenta</button>
+    <div class="note"><svg class="ic" aria-hidden="true"><use href="#i-info"/></svg><p><b>Cuenta local de esta demostración.</b> Tu correo y contraseña se guardan solo en este navegador, sin servidor ni cifrado. No uses una contraseña que uses en otros sitios.</p></div>
+    <h2 style="font-size:22px">Inicia sesión</h2>
+    <p class="sub" style="margin-bottom:12px">Si es tu primera vez, se crea tu cuenta con este correo y contraseña.</p>
+    <div class="form">
+      <label class="f full">Correo electrónico
+        <input id="loginEmail" type="email" autocomplete="email" placeholder="tu@correo.com">
+      </label>
+      <label class="f full">Contraseña
+        <input id="loginPassword" type="password" autocomplete="current-password" placeholder="••••••••">
+      </label>
     </div>
-
-    <section id="atab-login" class="atab">
-      <div id="acctList"></div>
-      <p class="msg" id="noAccMsg" hidden>Todavía no hay cuentas guardadas en este aparato. Crea una en la pestaña "Crear cuenta".</p>
-      <div id="pinBox" hidden style="margin-top:10px">
-        <label class="f">PIN de <span id="pinForName"></span>
-          <input id="pinInput" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="••••">
-        </label>
-        <p class="msg bad" id="pinMsg" role="status"></p>
-        <div style="display:flex;flex-wrap:wrap;gap:10px">
-          <button class="btn" id="pinSubmit" type="button">Entrar</button>
-          <button class="btn ghost" id="pinCancel" type="button">Cancelar</button>
-        </div>
-      </div>
-    </section>
-
-    <section id="atab-register" class="atab" hidden>
-      <div class="form">
-        <label class="f full">Tu nombre
-          <input id="regNombre" type="text" autocomplete="name" placeholder="Ej. María López">
-        </label>
-        <label class="f full">Nombre del rancho o lote principal
-          <input id="regRancho" type="text" placeholder="Ej. Rancho El Jitomatal">
-        </label>
-        <label class="f">Hectáreas totales
-          <input id="regHectareas" type="number" min="0.1" step="0.1" inputmode="decimal" placeholder="Ej. 2.5">
-        </label>
-        <label class="f">Número de lotes
-          <input id="regLotes" type="number" min="1" step="1" inputmode="numeric" placeholder="Ej. 3">
-          <small>Esta demostración simula un lote a la vez.</small>
-        </label>
-        <label class="f">Crea un PIN (4 dígitos)
-          <input id="regPin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="••••">
-        </label>
-        <label class="f">Confirma el PIN
-          <input id="regPin2" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="••••">
-        </label>
-      </div>
-      <p class="msg bad" id="regMsg" role="status"></p>
-      <button class="btn" id="regSubmit" type="button">Crear cuenta y entrar</button>
-    </section>
-
+    <p class="msg bad" id="loginMsg" role="status"></p>
+    <button class="btn" id="loginSubmit" type="button">Entrar</button>
     <p style="margin-top:18px;text-align:center"><button class="btn ghost small" id="guestEnter" type="button">Seguir sin cuenta</button></p>
   </div>
+</div>
+
+<!-- ====== PANTALLA DE INICIO: RESUMEN + MIS LOTES ====== -->
+<div class="wrap" id="homeWrap" hidden>
+  <div class="topbar">
+    <div class="brand"><svg class="ic" aria-hidden="true"><use href="#i-leaf"/></svg><span>Mi lote de jitomate</span></div>
+    <div class="topctrls">
+      <button id="themeToggle2" class="btn ghost iconbtn" type="button" aria-label="Cambiar a modo oscuro">
+        <svg class="ic" aria-hidden="true"><use href="#i-moon" id="themeIconUse2"/></svg>
+      </button>
+      <div class="acctchip" id="acctChip2" hidden>
+        <svg class="ic sm" aria-hidden="true"><use href="#i-user"/></svg>
+        <span id="acctChipName2"></span>
+        <button id="acctLogout2" class="btn ghost small" type="button">Salir</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="hometabs" role="tablist" aria-label="Secciones de inicio">
+    <button role="tab" id="ht-dash" data-htab="dash" aria-selected="true" type="button">Resumen</button>
+    <button role="tab" id="ht-lotes" data-htab="lotes" aria-selected="false" type="button">Mis lotes</button>
+  </div>
+
+  <section id="htab-dash" class="htab">
+    <div class="card">
+      <h2>Resumen de hoy</h2>
+      <p class="sub" style="margin-bottom:12px">Primero los lotes que más necesitan tu atención: toca regar o riesgo alto de plagas. Calculado con clima de ejemplo.</p>
+      <div id="dashCards"></div>
+      <p class="msg" id="dashEmpty" hidden>Todavía no tienes lotes de jitomate (el único cultivo con simulación activa). Ve a la pestaña "Mis lotes" para agregar uno.</p>
+    </div>
+  </section>
+
+  <section id="htab-lotes" class="htab" hidden>
+    <div class="note"><svg class="ic" aria-hidden="true"><use href="#i-info"/></svg><p><b>Por ahora solo jitomate tiene simulación completa.</b> El selector de cultivo ya incluye nopal, caña y maíz para mostrar que el sistema puede crecer, pero esos todavía están deshabilitados: hace falta calibrar su modelo de riego y plagas con un agrónomo antes de activarlos.</p></div>
+    <div class="card">
+      <h2 id="homeTitle">Mis lotes</h2>
+      <p class="sub" style="margin-bottom:12px">Cada lote guarda sus propios datos. Toca uno para abrir su simulador; usa "Editar" para corregir sus datos.</p>
+      <div id="loteCards"></div>
+      <p class="msg" id="noLotesMsg" hidden>Todavía no registras ningún lote. Agrega el primero abajo.</p>
+      <button class="btn" id="addLoteBtn" type="button">+ Agregar lote</button>
+    </div>
+
+    <div class="card" id="loteFormCard" hidden>
+      <h2 id="loteFormTitle">Registrar lote</h2>
+      <div class="form">
+        <label class="f full">Nombre del lote
+          <input id="lfNombre" type="text" placeholder="Ej. Lote norte">
+        </label>
+        <label class="f">Cultivo
+          <select id="lfCultivo"></select>
+        </label>
+        <label class="f">Municipio
+          <select id="lfMunicipio">
+            <option value="cuautla">Cuautla</option>
+            <option value="ayala">Ayala</option>
+            <option value="yautepec">Yautepec</option>
+            <option value="otro_mor">Otro municipio de Morelos</option>
+            <option value="fuera">Fuera de Morelos</option>
+          </select>
+        </label>
+        <label class="f">Hectáreas del lote
+          <input id="lfHectareas" type="number" min="0.1" step="0.1" inputmode="decimal" placeholder="Ej. 2.5">
+        </label>
+        <label class="f">Sistema de producción
+          <select id="lfSistema"><option value="campo">Campo abierto</option><option value="inv">Invernadero</option></select>
+        </label>
+        <label class="f">Tipo de suelo
+          <select id="lfSuelo"><option value="arenoso">Arenoso</option><option value="franco">Franco</option><option value="arcilloso">Arcilloso</option></select>
+        </label>
+        <label class="f">Cómo riegas
+          <select id="lfRiego"><option value="goteo">Goteo</option><option value="aspersion">Aspersión</option><option value="surco">Surco o rodado</option></select>
+        </label>
+        <label class="f">Fecha de siembra o trasplante
+          <input id="lfFecha" type="date">
+        </label>
+        <label class="f full">Notas (opcional)
+          <textarea id="lfNotas" placeholder="Ej. variedad, referencias del lote, contacto del encargado..."></textarea>
+        </label>
+      </div>
+      <p class="msg bad" id="loteFormMsg" role="status"></p>
+      <div style="display:flex;flex-wrap:wrap;gap:10px">
+        <button class="btn" id="loteFormSave" type="button">Guardar lote</button>
+        <button class="btn ghost" id="loteFormCancel" type="button">Cancelar</button>
+        <button class="btn ghost" id="loteFormDelete" type="button" hidden>Eliminar lote</button>
+      </div>
+    </div>
+  </section>
 </div>
 
 <div class="wrap" id="wrap" hidden>
 <div class="topbar">
   <div class="brand"><svg class="ic" aria-hidden="true"><use href="#i-leaf"/></svg><span>Mi lote de jitomate</span></div>
   <div class="topctrls">
+    <button id="backHomeBtn" class="btn ghost small" type="button" hidden>← Mis lotes</button>
     <div class="seg" role="group" aria-label="Quién usa la pantalla">
       <button id="m-prod" aria-pressed="true" type="button">Soy productor</button>
       <button id="m-tec" aria-pressed="false" type="button">Soy técnico</button>
@@ -635,7 +716,9 @@ function renderProd(){
  $("pDay").max=n-1;$("pDay").value=d.i;$("pPrev").disabled=d.i<=0;$("pNext").disabled=d.i>=n-1;
  const suelo={50:"Suelo arenoso",80:"Suelo franco",110:"Suelo arcilloso"}[P.TAW]||"Suelo personalizado";
  const rieg={85:"Goteo",75:"Aspersión",60:"Surco o rodado"}[P.Ea]||"Riego personalizado";
- $("loteChips").innerHTML=[S.system==="inv"?"Invernadero":"Campo abierto",suelo,rieg,"Trasplante: "+fmtD(S.clim[0].date)].map(t=>`<span class="chip">${esc(t)}</span>`).join("");
+ const loteChips=[S.system==="inv"?"Invernadero":"Campo abierto",suelo,rieg,"Trasplante: "+fmtD(S.clim[0].date)];
+ if(CURRENT_LOTE)loteChips.unshift(CURRENT_LOTE.nombre);
+ $("loteChips").innerHTML=loteChips.map(t=>`<span class="chip">${esc(t)}</span>`).join("");
  /* riego */
  const e=logEntry(d.i);
  let stat;
@@ -683,8 +766,7 @@ function renderProd(){
  else if(dW<=-.03*cal.water){msg=`En este ciclo tu calendario se queda corto: con el riego recomendado usas <b>${nf(-dW)} m³ más por hectárea</b>, pero la planta no pasa sed ${dY>.5?"y la cosecha estimada mejora":""}.`;cls="color:var(--warn)"}
  else msg=`Tu forma de regar y la recomendada gastan casi lo mismo.`;
  const pesos=S.costo>0&&dW>0?`<p class="big">Son unos $${nf(dW*S.costo)} menos en agua por hectárea.</p>`:"";
- const acc=currentAcc();
- const totalHa=(acc&&acc.hectareas>0&&dW>=.03*cal.water)?`<p class="eq">Para tus <b>${nf(acc.hectareas,1)} ha</b> registradas, serían unos <b>${nf(dW*acc.hectareas)} m³ menos en total</b>${acc.lotes>1?` (tienes ${acc.lotes} lotes registrados; esta demo simula uno a la vez)`:""}.</p>`:"";
+ const totalHa=(CURRENT_LOTE&&CURRENT_LOTE.hectareas>0&&dW>=.03*cal.water)?`<p class="eq">Para tu lote <b>"${esc(CURRENT_LOTE.nombre)}"</b> (<b>${nf(CURRENT_LOTE.hectareas,1)} ha</b>), serían unos <b>${nf(dW*CURRENT_LOTE.hectareas)} m³ menos en total</b>.</p>`:"";
  $("pAhorro").innerHTML=`<h2>¿Cuánta agua te ahorras?</h2><p class="sub">En todo el ciclo, por hectárea.</p>
   <div class="sbar"><div class="lab"><span>Como riegas normalmente</span><span>${nf(cal.water)} m³</span></div><div class="track"><div class="fill" style="width:${cal.water/mx*100}%;background:var(--c-cal)"></div></div></div>
   <div class="sbar"><div class="lab"><span>Con la recomendación</span><span>${nf(bal.water)} m³</span></div><div class="track"><div class="fill" style="width:${bal.water/mx*100}%;background:var(--c-bal)"></div></div></div>
@@ -838,93 +920,236 @@ function applyTheme(){
  const t=readTheme();
  if(t==="light"||t==="dark")document.documentElement.setAttribute("data-theme",t);
  else document.documentElement.removeAttribute("data-theme");
- const eff=effectiveTheme(),use=$("themeIconUse"),btn=$("themeToggle");
- if(use)use.setAttribute("href",eff==="dark"?"#i-sun":"#i-moon");
- if(btn)btn.setAttribute("aria-label",eff==="dark"?"Cambiar a modo claro":"Cambiar a modo oscuro");
+ const eff=effectiveTheme(),label=eff==="dark"?"Cambiar a modo claro":"Cambiar a modo oscuro";
+ [["themeIconUse","themeToggle"],["themeIconUse2","themeToggle2"],["themeIconUse3","themeToggle3"]].forEach(([iconId,btnId])=>{
+  const use=$(iconId),btn=$(btnId);
+  if(use)use.setAttribute("href",eff==="dark"?"#i-sun":"#i-moon");
+  if(btn)btn.setAttribute("aria-label",label);
+ });
 }
-$("themeToggle").onclick=()=>{writeTheme(effectiveTheme()==="dark"?"light":"dark");applyTheme()};
+function toggleTheme(){writeTheme(effectiveTheme()==="dark"?"light":"dark");applyTheme()}
+$("themeToggle").onclick=toggleTheme;
+$("themeToggle2").onclick=toggleTheme;
+$("themeToggle3").onclick=toggleTheme;
 applyTheme();
 
-/* ---------- cuenta local (demo, sin servidor ni cifrado) ---------- */
+/* ---------- cuenta local y lotes (demo, sin servidor ni cifrado) ---------- */
+const CULTIVOS={
+ jitomate:{label:"Jitomate",disponible:true},
+ nopal:{label:"Nopal",disponible:false},
+ cana:{label:"Caña de azúcar",disponible:false},
+ maiz:{label:"Maíz",disponible:false},
+};
+const MUNI_LABEL={cuautla:"Cuautla",ayala:"Ayala",yautepec:"Yautepec",otro_mor:"Otro municipio de Morelos",fuera:"Fuera de Morelos"};
 function loadAcc(){try{const d=JSON.parse(localStorage.getItem("jitomateAccounts"));return d&&d.accounts?d:{accounts:[],sessionId:null}}catch(e){return {accounts:[],sessionId:null}}}
 function saveAcc(d){try{localStorage.setItem("jitomateAccounts",JSON.stringify(d))}catch(e){}}
 let ACC=loadAcc();
+let CURRENT_LOTE=null,editingLoteId=null,homeTab="dash";
 function accById(id){return ACC.accounts.find(a=>a.id===id)||null}
 function currentAcc(){return accById(ACC.sessionId)}
 function accUid(){return "a"+Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
+function validEmail(s){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s)}
+function accByEmail(email){return ACC.accounts.find(a=>a.email.toLowerCase()===email.toLowerCase())||null}
 
-function renderAcctList(){
- const box=$("acctList");
- if(!ACC.accounts.length){box.innerHTML="";$("noAccMsg").hidden=false;return}
- $("noAccMsg").hidden=true;
- box.innerHTML=ACC.accounts.map(a=>`<button class="btn ghost acctbtn" data-acc="${a.id}" type="button">${ic("user","sm")} ${esc(a.nombre)} · ${esc(a.rancho||"Sin nombre de rancho")}</button>`).join("");
-}
-function showPinBox(id){
- const a=accById(id);if(!a)return;
- $("pinBox").hidden=false;$("pinForName").textContent=a.nombre;$("pinInput").value="";$("pinMsg").textContent="";
- $("pinBox").dataset.acc=id;$("pinInput").focus();
-}
-$("acctList").onclick=e=>{const b=e.target.closest("[data-acc]");if(b)showPinBox(b.dataset.acc)};
-$("pinCancel").onclick=()=>{$("pinBox").hidden=true};
-$("pinSubmit").onclick=()=>{
- const id=$("pinBox").dataset.acc,a=accById(id),v=$("pinInput").value.trim();
- if(a&&v===a.pin){ACC.sessionId=id;saveAcc(ACC);enterApp()}
- else{$("pinMsg").textContent="PIN incorrecto. Intenta de nuevo."}
-};
-$("pinInput").addEventListener("keydown",e=>{if(e.key==="Enter")$("pinSubmit").click()});
-
-document.querySelectorAll("#authWrap .atabs button").forEach(b=>b.onclick=()=>{
- document.querySelectorAll("#authWrap .atabs button").forEach(x=>x.setAttribute("aria-selected",x===b));
- document.querySelectorAll("#authWrap .atab").forEach(s=>s.hidden=(s.id!=="atab-"+b.dataset.atab));
-});
-
-$("regSubmit").onclick=()=>{
- const nombre=$("regNombre").value.trim(),rancho=$("regRancho").value.trim();
- const ha=parseFloat($("regHectareas").value),lotes=parseInt($("regLotes").value,10);
- const pin=$("regPin").value.trim(),pin2=$("regPin2").value.trim();
- const msg=$("regMsg");
- if(!nombre){msg.textContent="Escribe tu nombre.";return}
- if(!(ha>0)){msg.textContent="Escribe las hectáreas totales (mayor que 0).";return}
- if(!(lotes>=1)){msg.textContent="Escribe el número de lotes (al menos 1).";return}
- if(!/^\d{4}$/.test(pin)){msg.textContent="El PIN debe tener exactamente 4 dígitos.";return}
- if(pin!==pin2){msg.textContent="Los dos PIN no coinciden.";return}
+$("loginSubmit").onclick=()=>{
+ const email=$("loginEmail").value.trim(),pass=$("loginPassword").value;
+ const msg=$("loginMsg");
+ if(!validEmail(email)){msg.textContent="Escribe un correo válido.";return}
+ if(pass.length<4){msg.textContent="La contraseña debe tener al menos 4 caracteres.";return}
+ let acc=accByEmail(email);
+ if(acc){
+  if(acc.password!==pass){msg.textContent="Contraseña incorrecta para este correo.";return}
+ }else{
+  acc={id:accUid(),email,password:pass,lotes:[],creado:new Date().toISOString().slice(0,10)};
+  ACC.accounts.push(acc);
+ }
  msg.textContent="";
- const acc={id:accUid(),nombre,rancho,hectareas:ha,lotes,pin,creado:new Date().toISOString().slice(0,10)};
- ACC.accounts.push(acc);ACC.sessionId=acc.id;saveAcc(ACC);
+ ACC.sessionId=acc.id;saveAcc(ACC);
  enterApp();
 };
+$("loginEmail").addEventListener("keydown",e=>{if(e.key==="Enter")$("loginPassword").focus()});
+$("loginPassword").addEventListener("keydown",e=>{if(e.key==="Enter")$("loginSubmit").click()});
 
 $("guestEnter").onclick=()=>{ACC.sessionId=null;enterApp()};
 $("acctLogout").onclick=()=>{ACC.sessionId=null;saveAcc(ACC);showAuth()};
+$("acctLogout2").onclick=()=>{ACC.sessionId=null;saveAcc(ACC);showAuth()};
 $("acctCreateBtn").onclick=()=>showAuth();
 
+function setScreen(which){
+ $("landingWrap").hidden=which!=="landing";
+ $("authWrap").hidden=which!=="auth";
+ $("homeWrap").hidden=which!=="home";
+ $("wrap").hidden=which!=="app";
+}
+$("landingStart").onclick=()=>{
+ if(currentAcc()){setScreen("home");homeTab="dash";renderHome()}
+ else{showAuth()}
+};
 function showAuth(){
- $("wrap").hidden=true;$("authWrap").hidden=false;
- renderAcctList();
- document.querySelectorAll("#authWrap .atabs button").forEach(x=>x.setAttribute("aria-selected",String(x.dataset.atab==="login")));
- document.querySelectorAll("#authWrap .atab").forEach(s=>s.hidden=(s.id!=="atab-login"));
- $("pinBox").hidden=true;
+ setScreen("auth");
+ $("loginEmail").value="";$("loginPassword").value="";$("loginMsg").textContent="";
+ $("loginEmail").focus();
 }
 
 function updateAcctChip(){
  const a=currentAcc();
  $("acctChip").hidden=!a;
+ $("acctChip2").hidden=!a;
  $("acctCreateBtn").hidden=!!a;
- if(a)$("acctChipName").textContent=a.nombre;
+ $("backHomeBtn").hidden=!a;
+ if(a){$("acctChipName").textContent=a.email;$("acctChipName2").textContent=a.email}
 }
 
-function enterApp(){
- $("authWrap").hidden=true;$("wrap").hidden=false;
- updateAcctChip();
+/* ---- pantalla de inicio: pestañas ---- */
+document.querySelectorAll("#homeWrap .hometabs button").forEach(b=>b.onclick=()=>{
+ homeTab=b.dataset.htab;
+ document.querySelectorAll("#homeWrap .hometabs button").forEach(x=>x.setAttribute("aria-selected",x===b));
+ document.querySelectorAll("#homeWrap .htab").forEach(s=>s.hidden=(s.id!=="htab-"+homeTab));
+ if(homeTab==="dash")renderDashboard();
+});
+function renderHome(){
+ document.querySelectorAll("#homeWrap .hometabs button").forEach(x=>x.setAttribute("aria-selected",String(x.dataset.htab===homeTab)));
+ document.querySelectorAll("#homeWrap .htab").forEach(s=>s.hidden=(s.id!=="htab-"+homeTab));
+ renderDashboard();
+ renderLoteList();
+}
+
+/* ---- resumen / dashboard: lotes que más necesitan atención hoy ---- */
+function computeLoteToday(l){
+ if(!(CULTIVOS[l.cultivo]||CULTIVOS.jitomate).disponible)return null;
+ const save={start:S.start,system:S.system,clima:S.clima,p:S.p,csv:S.csv,soilObs:S.soilObs};
+ S.start=l.fechaSiembra;S.system=l.sistema;S.clima="normal";S.csv=null;S.soilObs={};
+ S.p=Object.assign({},DEF,{TAW:SUELOS[l.suelo]||DEF.TAW,Ea:RIEGOS[l.riego]||DEF.Ea});
+ prep();
+ const n=S.clim.length,start=parseISO(S.start)||new Date();
+ const idx=clamp(Math.round((new Date()-start)/MS),0,n-1);
+ const bal=S.sim.bal,needsWater=bal.irr[idx]>0;
+ const items=["tiz","mos","tuta"].map(k=>({k,v:S.pl[k][idx]}));
+ const top=items.reduce((a,b)=>b.v>a.v?b:a);
+ const out={needsWater,pestLevel:cat(top.v),pestName:PNAMES[top.k]};
+ S.start=save.start;S.system=save.system;S.clima=save.clima;S.p=save.p;S.csv=save.csv;S.soilObs=save.soilObs;
+ return out;
+}
+function renderDashboard(){
+ const a=currentAcc(),lotes=a?(a.lotes||[]):[];
+ const jLotes=lotes.filter(l=>(CULTIVOS[l.cultivo]||CULTIVOS.jitomate).disponible);
+ if(!jLotes.length){$("dashCards").innerHTML="";$("dashEmpty").hidden=false;return}
+ $("dashEmpty").hidden=true;
+ const rows=jLotes.map(l=>({l,snap:computeLoteToday(l)})).filter(r=>r.snap);
+ const lvlScore={alto:3,medio:2,bajo:1};
+ const score=r=>(r.snap.needsWater?10:0)+(lvlScore[r.snap.pestLevel]||0);
+ rows.sort((x,y)=>score(y)-score(x));
+ const lvlIc={bajo:"check",medio:"tri",alto:"oct"};
+ $("dashCards").innerHTML=rows.map(({l,snap})=>`
+  <button class="btn ghost acctbtn dashrow" data-dashopen="${l.id}" type="button">
+   <span style="display:flex;flex-direction:column;align-items:flex-start;gap:4px;width:100%">
+    <span style="display:flex;justify-content:space-between;align-items:center;width:100%;gap:10px">
+     <b>${esc(l.nombre)}</b>
+     <span class="lvl ${snap.pestLevel}">${ic(lvlIc[snap.pestLevel],"sm")} ${snap.pestLevel}</span>
+    </span>
+    <span class="sub">${snap.needsWater?ic("drop","sm")+" Toca regar hoy":"No necesita riego hoy"} · ${esc(CULTIVOS[l.cultivo].label)} · ${nf(l.hectareas,1)} ha</span>
+   </span>
+  </button>`).join("");
+}
+$("dashCards").onclick=e=>{const b=e.target.closest("[data-dashopen]");if(b)enterLote(b.dataset.dashopen)};
+
+/* ---- pestaña mis lotes: alta/edición/baja ---- */
+function cultivoOptionsHTML(){return Object.keys(CULTIVOS).map(k=>{const c=CULTIVOS[k];return `<option value="${k}"${c.disponible?"":" disabled"}>${esc(c.label)}${c.disponible?"":" (próximamente)"}</option>`}).join("")}
+$("lfCultivo").innerHTML=cultivoOptionsHTML();
+
+function renderLoteList(){
+ const a=currentAcc();
+ const lotes=a?(a.lotes||[]):[];
+ const box=$("loteCards");
+ if(!lotes.length){box.innerHTML="";$("noLotesMsg").hidden=false}
+ else{
+  $("noLotesMsg").hidden=true;
+  box.innerHTML=lotes.map(l=>{
+   const crop=CULTIVOS[l.cultivo]||CULTIVOS.jitomate;
+   return `<div style="display:flex;gap:8px;margin-bottom:10px;align-items:stretch">
+    <button class="btn ghost acctbtn" data-open="${l.id}" type="button" style="flex:1;margin-bottom:0">
+     <span style="display:flex;flex-direction:column;align-items:flex-start;gap:2px">
+      <b>${esc(l.nombre)}</b>
+      <span class="sub" style="font-size:14px">${esc(crop.label)} · ${nf(l.hectareas,1)} ha · ${esc(MUNI_LABEL[l.municipio]||l.municipio||"")}</span>
+     </span>
+    </button>
+    <button class="btn ghost small" data-edit="${l.id}" type="button">Editar</button>
+   </div>`;
+  }).join("");
+ }
+}
+$("loteCards").onclick=e=>{
+ const openBtn=e.target.closest("[data-open]"),editBtn=e.target.closest("[data-edit]");
+ if(openBtn)enterLote(openBtn.dataset.open);
+ else if(editBtn)openLoteForm(editBtn.dataset.edit);
+};
+$("addLoteBtn").onclick=()=>openLoteForm(null);
+
+function openLoteForm(id){
+ editingLoteId=id||null;
+ const a=currentAcc(),l=(id&&a)?a.lotes.find(x=>x.id===id):null;
+ $("loteFormTitle").textContent=l?"Editar lote":"Registrar lote";
+ $("lfNombre").value=l?l.nombre:"";
+ $("lfCultivo").value=l?l.cultivo:"jitomate";
+ $("lfMunicipio").value=l?l.municipio:"cuautla";
+ $("lfHectareas").value=l?l.hectareas:"";
+ $("lfSistema").value=l?l.sistema:"campo";
+ $("lfSuelo").value=l?l.suelo:"franco";
+ $("lfRiego").value=l?l.riego:"goteo";
+ $("lfFecha").value=l?l.fechaSiembra:"";
+ $("lfNotas").value=l?(l.notas||""):"";
+ $("loteFormMsg").textContent="";
+ $("loteFormDelete").hidden=!l;
+ $("loteFormCard").hidden=false;
+ $("loteFormCard").scrollIntoView({block:"start"});
+}
+$("loteFormCancel").onclick=()=>{$("loteFormCard").hidden=true};
+$("loteFormDelete").onclick=()=>{
+ const a=currentAcc();if(!a||!editingLoteId)return;
+ a.lotes=a.lotes.filter(x=>x.id!==editingLoteId);
+ saveAcc(ACC);$("loteFormCard").hidden=true;renderLoteList();renderDashboard();
+};
+$("loteFormSave").onclick=()=>{
+ const a=currentAcc();if(!a)return;
+ const nombre=$("lfNombre").value.trim(),cultivo=$("lfCultivo").value,municipio=$("lfMunicipio").value;
+ const ha=parseFloat($("lfHectareas").value),sistema=$("lfSistema").value,suelo=$("lfSuelo").value,riego=$("lfRiego").value;
+ const fecha=$("lfFecha").value,notas=$("lfNotas").value.trim();
+ const msg=$("loteFormMsg");
+ if(!nombre){msg.textContent="Escribe un nombre para el lote.";return}
+ if(!CULTIVOS[cultivo]||!CULTIVOS[cultivo].disponible){msg.textContent="Por ahora solo se pueden crear lotes de jitomate.";return}
+ if(!(ha>0)){msg.textContent="Escribe las hectáreas del lote (mayor que 0).";return}
+ if(!parseISO(fecha)){msg.textContent="Escribe una fecha de siembra o trasplante válida.";return}
+ msg.textContent="";
+ a.lotes=a.lotes||[];
+ if(editingLoteId){
+  const l=a.lotes.find(x=>x.id===editingLoteId);
+  Object.assign(l,{nombre,cultivo,municipio,hectareas:ha,sistema,suelo,riego,fechaSiembra:fecha,notas});
+ }else{
+  a.lotes.push({id:accUid(),nombre,cultivo,municipio,hectareas:ha,sistema,suelo,riego,fechaSiembra:fecha,notas});
+ }
+ saveAcc(ACC);
+ $("loteFormCard").hidden=true;
+ renderLoteList();
+ renderDashboard();
+};
+
+function enterLote(id){
+ const a=currentAcc(),l=a&&a.lotes.find(x=>x.id===id);if(!l)return;
+ CURRENT_LOTE=l;
+ S.start=l.fechaSiembra;S.system=l.sistema;
+ S.p.TAW=SUELOS[l.suelo]||S.p.TAW;S.p.Ea=RIEGOS[l.riego]||S.p.Ea;
+ S.log=[];S.traps={};S.soilObs={};S.day=60;
+ setScreen("app");
  render();
 }
+$("backHomeBtn").onclick=()=>{setScreen("home");renderHome()};
 
-renderAcctList();
-if(!ACC.accounts.length){
- document.querySelectorAll("#authWrap .atabs button").forEach(x=>x.setAttribute("aria-selected",String(x.dataset.atab==="register")));
- document.querySelectorAll("#authWrap .atab").forEach(s=>s.hidden=(s.id!=="atab-register"));
+function enterApp(){
+ updateAcctChip();
+ if(currentAcc()){setScreen("home");homeTab="dash";renderHome()}
+ else{setScreen("app");render()}
 }
-if(currentAcc()){$("authWrap").hidden=true;$("wrap").hidden=false}
+
 updateAcctChip();
 
 renderParams();bindPins();render();

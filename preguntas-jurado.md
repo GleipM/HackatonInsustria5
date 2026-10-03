@@ -31,4 +31,7 @@
     Primero se valida con pocas parcelas y técnicos: clima oficial, humedad medida, riego aplicado, fenología, conteos y cosecha. Después se versionan los parámetros por zona y cultivo, se agrega almacenamiento seguro y se evalúa el modelo por temporada. No se debe escalar una regla sin calibración.
 
 11. **¿El login y la cuenta son seguros?**
-    No, y lo decimos explícitamente en la propia pantalla. Es una cuenta local de la demo: nombre, rancho, hectáreas, lotes y PIN de 4 dígitos se guardan sin cifrar en el navegador del dispositivo, sin servidor. Sirve para mostrar cómo el simulador personalizaría la experiencia por productor (por ejemplo, el ahorro total según hectáreas registradas). Un piloto real necesita autenticación en servidor, contraseñas con hash, y cumplimiento de protección de datos personales.
+    No, y lo decimos explícitamente en la propia pantalla. Es una cuenta local de la demo: correo y contraseña se guardan en texto plano en el navegador del dispositivo, sin servidor. Sirve para mostrar el concepto — iniciar sesión, administrar varios lotes, ver un resumen diario — no para proteger datos reales. Un piloto real necesita autenticación en servidor, contraseñas con hash y cumplimiento de protección de datos personales.
+
+12. **¿Por qué el selector de cultivo incluye nopal, caña y maíz si solo simulan jitomate?**
+    Para mostrar, sin inventar nada, que la arquitectura ya está lista para más cultivos de Morelos: esas opciones aparecen deshabilitadas ("próximamente") y no se pueden crear lotes con ellas. Activar cada cultivo de verdad implica trabajar con un agrónomo especialista en su fenología, sus coeficientes de riego y sus plagas propias — no reutilizar los del jitomate.
