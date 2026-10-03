@@ -1624,9 +1624,16 @@ $("landingDemo2").onclick=e=>accionLanding(goDemo,e.currentTarget);
 
 /* marquesina de valores en la landing */
 (function(){
- const items=["Riego a tiempo","Plagas bajo control","Validado por tu técnico","Ahorra agua","Decide con datos","Sin servidor, sin vueltas"];
- const html=items.map(t=>`<span>${esc(t)}</span>`).join("");
- $("landMarquee").innerHTML=html+html;
+ const items=["Riego a tiempo","Plagas bajo control","Validado por tu técnico","Ahorra agua","Decide con datos"];
+ const una=items.map(t=>`<span>${esc(t)}</span>`).join("");
+ const tira=$("landMarquee");
+ // La animación desplaza la tira -50%, así que la primera mitad tiene que
+ // cubrir el ancho de la pantalla o se ve un hueco al reiniciar el bucle.
+ // Se repiten los textos hasta cubrirlo y después se duplica todo.
+ const objetivo=Math.max(window.innerWidth,screen.width||0);
+ tira.innerHTML=una;
+ for(let i=0;i<12&&tira.scrollWidth<objetivo;i++)tira.insertAdjacentHTML("beforeend",una);
+ tira.innerHTML=tira.innerHTML+tira.innerHTML;
 })();
 function showAuth(){
  setScreen("auth");
