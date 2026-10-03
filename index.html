@@ -494,10 +494,6 @@ td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
       </div>
     </section>
 
-    <section class="landsection">
-      <div class="note"><svg class="ic" aria-hidden="true"><use href="#i-info"/></svg><p><b>Demostración con datos de ejemplo.</b> Pruébala ahora mismo sin registrarte ni instalar nada: corre completa en tu navegador.</p></div>
-    </section>
-
     <footer class="landfoot">
       <div class="landfoot-grid">
         <div>
@@ -1572,10 +1568,10 @@ function setScreen(which){
  $("homeWrap").hidden=which!=="home";
  $("wrap").hidden=which!=="app";
 }
-function goStart(){
- if(currentAcc()){setScreen("home");homeTab="dash";renderHome()}
- else{showAuth()}
-}
+// Siempre lleva al acceso, aunque haya una sesión abierta. Si entrara directo
+// cuando queda sesión de la cuenta de prueba, no habría forma de llegar al
+// login desde la portada para mostrarlo.
+function goStart(){showAuth()}
 // Los manejadores de estos botones se asignan más abajo, envueltos en
 // accionLanding para que un fallo nunca quede en silencio.
 
