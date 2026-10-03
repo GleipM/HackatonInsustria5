@@ -1,4 +1,4 @@
-# Plan: detección de plagas por foto (lo que falta)
+# Plan: detección de plagas por foto
 
 Este documento es para quien continúe esta función. Resume qué ya quedó armado, qué se decidió, qué sigue abierto y en qué orden conviene atacarlo. Todo vive en `index.html` (archivo único, sin build, sin servidor — ver "Restricciones" abajo antes de cambiar la arquitectura).
 
@@ -14,7 +14,7 @@ Todo dentro de `index.html`:
 - **Subida de foto alternativa**: input de archivo (`#trapPhotoFile`) para cuando no hay cámara o el navegador no da permiso (líneas 1207-1214).
 - **La foto se guarda por día del ciclo**, en `S.trapPhotos[S.day]` (igual que `S.traps[S.day]` ya guarda los conteos numéricos). Se resetea al entrar a un lote nuevo (línea 1582) y al cambiar de día se muestra la foto de ese día o el estado vacío (`renderTrapPhoto()`, líneas 1171-1177, enganchada en `renderTrapInputs()`).
 - **Vista previa + quitar foto**: miniatura de 140×140, botón "Quitar foto".
-- **Botón "Analizar con IA (próximamente)"**: existe y es clickeable, pero es un *stub* honesto — solo muestra el mensaje "La detección automática todavía no está conectada a un proveedor de visión. Por ahora, registra el conteo a mano abajo." (línea 1216-1217). **Esto es lo que falta conectar de verdad.**
+- **Botón "Analizar con IA"**: originalmente un *stub* honesto; ya está conectado a Gemini (ver "Estado al 2026-10-02" abajo).
 - Responsive y modo oscuro probados (360px–1920px). Sin errores de consola.
 
 IDs/funciones clave para quien siga:
@@ -23,7 +23,9 @@ IDs/funciones clave para quien siga:
 | `#trapPhotoBox`, `#trapPhotoEmpty`, `#trapPhotoPreview`, `#trapPhotoImg` | Contenedor de la foto del día |
 | `#trapCamBtn`, `#camModal`, `#camVideo`, `#camShoot`, `#camCancel`, `#camCanvas` | Flujo de cámara |
 | `#trapPhotoFile` | Subida alterna por archivo |
-| `#trapPhotoAnalyze`, `#trapPhotoMsg` | Botón de análisis (stub) y su mensaje de estado |
+| `#trapPhotoAnalyze`, `#trapPhotoMsg` | Botón de análisis y su mensaje de estado/sugerencia |
+| `#aiKeyBox`, `#aiKeyInput`, `#aiKeyToggle`, `#aiKeySave`, `#aiKeyClear` | Panel de la API key de Gemini |
+| `analyzeTrapPhoto()`, `AI_PROMPT`, `AI_SCHEMA`, `AI_MODEL` | Llamada a Gemini, prompt y esquema JSON |
 | `S.trapPhotos` | `{ [díaDelCiclo]: dataURL }` |
 | `renderTrapPhoto()` | Repinta la foto del día actual |
 
@@ -34,9 +36,29 @@ IDs/funciones clave para quien siga:
 3. **Para resolver la tensión "API en la nube" + "sin servidor"**: cada quien pega **su propia API key**, que se guarda solo en su navegador (`localStorage`), igual que ya hace la cuenta local. La app llama directo desde el navegador a la API del proveedor. Esto se debe anunciar en pantalla tan explícitamente como el aviso de "cuenta local, sin servidor ni cifrado" que ya existe en el login — **nunca** ocultar que la clave es visible ahí.
 4. **Se integra con lo existente**, no reemplaza el simulador: vive dentro de "Conteo de trampas del día" en la vista Técnico, no es una pantalla nueva aparte.
 
-## Lo que falta decidir
+## Estado al 2026-10-02: conectado a Gemini
 
-**Proveedor de visión** — quedó pendiente de investigar, no elegido:
+**Proveedor elegido: Google Gemini**, modelo `gemini-3.8-flash` (Flash estable con nivel gratuito, para que el jurado pueda probar con su propia key de AI Studio). Llamada REST directa a `models/gemini-3.8-flash:generateContent` con la key en el header `x-goog-api-key` (no en la URL, para que no quede en historial/logs) y salida JSON forzada con `responseSchema`.
+
+Lo hecho, todo en `index.html`:
+
+- **Prueba de CORS (paso 1)**: preflight desde un origen `https://gleipm.github.io` contra Gemini y Anthropic → ambos responden `Access-Control-Allow-Origin` y los errores (clave inválida) también llegan legibles al navegador.
+- **Campo de API key (paso 2)**: `<details id="aiKeyBox">` bajo la foto, input password con botón ojo (`#aiKeyInput`, `#aiKeyToggle`), "Guardar clave"/"Borrar clave". Se guarda en `localStorage["visionApiKey"]`, separado de cuentas y lotes. Aviso `.authnote` explícito: clave local, visible, sin cifrado; la foto se envía a Google y en el nivel gratuito puede usarse para mejorar sus productos.
+- **Llamada real (paso 3)**: `analyzeTrapPhoto()` reduce la foto a máx. 1600 px JPEG (`shrinkPhoto()`), manda `AI_PROMPT` + `AI_SCHEMA`. El prompt se limita a mosquita blanca y palomilla del tomate; otras especies solo se marcan como `otros_insectos` sin nombrarlas; prohíbe recomendar productos.
+- **Resultado como sugerencia (paso 4)**: texto en `#trapPhotoMsg` ("La IA sugiere (confianza …): Mosquita blanca: ~6 …", más la nota de la IA y el recordatorio "pendiente de validar"). **Nunca** escribe en `.trapInput` ni en `S.traps`. Si la respuesta llega después de cambiar de día o de foto, se descarta.
+- **Errores honestos (paso 5)**: sin clave (abre el panel de clave), clave inválida (400), sin permiso (401/403), cuota (429), sin red, respuesta bloqueada, sin texto o JSON ilegible: cada uno con su mensaje, nunca un resultado inventado.
+- **Docs (paso 6)**: `README.md`, `preguntas-jurado.md` (pregunta 13) y `manual-usuario.md` actualizados.
+- **Probado** con Playwright + Edge: flujo sin clave, clave inválida contra la API real de Gemini, y respuestas simuladas (éxito, "no es trampa", sin red, 429, cambio de día a mitad del análisis). 360 px en oscuro sin scroll horizontal, sin errores de JS.
+
+### Lo que sigue pendiente
+
+- **Probar con una key real y fotos reales de trampas.** Todavía no se ha hecho una llamada exitosa real (no había key disponible al implementar); el camino de éxito solo se probó con respuesta simulada. Hacerlo antes de la demo: si `gemini-3.8-flash` rechazara el `responseSchema` o el nombre del modelo, el error se mostraría en pantalla tal cual.
+- **Regenerar `manual-usuario.pdf`** a partir del `.md` actualizado.
+- **Medir el error de la sugerencia** contra conteos manuales antes de decir cualquier número de precisión.
+
+## Decisión de proveedor (histórico)
+
+Comparación que se hizo antes de elegir Gemini:
 
 | Opción | A favor | En contra |
 |---|---|---|

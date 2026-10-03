@@ -35,3 +35,6 @@
 
 12. **¿Por qué el selector de cultivo incluye nopal, caña y maíz si solo simulan jitomate?**
     Para mostrar, sin inventar nada, que la arquitectura ya está lista para más cultivos de Morelos: esas opciones aparecen deshabilitadas ("próximamente") y no se pueden crear lotes con ellas. Activar cada cultivo de verdad implica trabajar con un agrónomo especialista en su fenología, sus coeficientes de riego y sus plagas propias — no reutilizar los del jitomate.
+
+13. **¿La detección de plagas por foto es confiable?**
+    No como dato final, y la app no la trata así. El técnico toma o sube la foto de la trampa y una IA de visión en la nube (Google Gemini) sugiere cuántos adultos de mosquita blanca y de palomilla del tomate ve; no nombra otras especies ni evalúa el tizón. La sugerencia aparece como texto "pendiente de validar" y nunca llena los conteos sola: el técnico revisa la foto y escribe el número. No hemos medido su precisión contra conteos reales, depende mucho del enfoque y la luz, y no recomienda productos. Para no tener servidor, cada técnico usa su propia API key, que se guarda en su navegador y es visible ahí; la pantalla lo avisa y también avisa que la foto se envía a Google. Un piloto real necesitaría medir el error contra conteos manuales y mover la clave a un servidor.

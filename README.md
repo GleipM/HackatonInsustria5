@@ -10,7 +10,7 @@ Zona de ejemplo: valle de Cuautla–Ayala–Yautepec, Morelos. Cultivo: jitomate
 
 - **Cuenta y lotes:** landing page → inicio de sesión con correo y contraseña (cuenta local del navegador, sin servidor) → pestaña **Resumen** (los lotes que más necesitan atención hoy: riego o riesgo de plagas) y pestaña **Mis lotes** (alta, edición y baja de lotes con sus propios datos). El selector de cultivo ya incluye nopal, caña y maíz, deshabilitados, para mostrar que el sistema puede crecer; solo jitomate tiene simulación activa.
 - **Vista Productor:** responde en lenguaje sencillo si hoy toca regar y cuánta agua aplicar, muestra el agua que queda en el suelo, el nivel de riesgo de plagas, los próximos 7 días y cuánta agua se ahorra frente al calendario del productor.
-- **Vista Técnico:** compara calendario, balance hídrico, riego deficitario y goteo frecuente; acepta CSV de clima, captura humedad medida y conteos de trampas, muestra precisión/cobertura exploratorias y resume agua, ahorro, estrés y alertas.
+- **Vista Técnico:** compara calendario, balance hídrico, riego deficitario y goteo frecuente; acepta CSV de clima, captura humedad medida y conteos de trampas (con foto de la trampa por cámara o archivo y, opcionalmente, una sugerencia de conteo de mosquita blanca y palomilla del tomate hecha por IA de visión con Gemini, usando la API key propia del técnico guardada solo en su navegador; la sugerencia nunca se guarda sola), muestra precisión/cobertura exploratorias y resume agua, ahorro, estrés y alertas.
 - **Revisión humana:** toda recomendación queda como "pendiente de validación" hasta que el técnico la valide. La herramienta nunca recomienda un agroquímico.
 
 ## Cómo funciona

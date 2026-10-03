@@ -149,6 +149,13 @@ Usa la barra deslizable de arriba ("Día del ciclo") para moverte por las fechas
 
 - Una gráfica con los tres índices de riesgo (tizón tardío, mosquita blanca, palomilla del tomate) de 0 a 100 a lo largo del ciclo, con bandas de color (bajo/medio/alto) y la línea de alerta.
 - **Conteo de trampas del día:** anota aquí lo que de verdad se contó en campo (plantas con síntomas de tizón, individuos de mosquita por trampa, capturas de palomilla por trampa) y presiona "Guardar conteos". En cuanto haya conteos guardados, aparece una **precisión** y **cobertura** exploratorias por plaga: qué tan seguido una alerta del modelo coincidió con un conteo positivo. No reemplaza una validación fitopatológica, pero ayuda a ver si el modelo va por buen camino.
+- **Foto de la trampa y sugerencia de la IA (opcional):**
+  1. Presiona **"Tomar foto de la trampa"** (el navegador pide permiso para usar la cámara; usa la trasera si hay) y luego **"Capturar"**. Si no tienes cámara o no das permiso, usa **"Subir foto"**. La foto queda guardada para el día del ciclo que tengas seleccionado.
+  2. La primera vez, abre **"Clave de la IA de visión (Gemini)"**. Entra a [aistudio.google.com/apikey](https://aistudio.google.com/apikey) con una cuenta de Google, crea una API key gratuita, cópiala, pégala en el campo y presiona **"Guardar clave"**. El ojo muestra u oculta la clave; **"Borrar clave"** la quita del navegador.
+  3. Presiona **"Analizar con IA"**. En unos segundos verás algo como *"La IA sugiere (confianza media): Mosquita blanca: ~6, Palomilla del tomate: ~1"* y una nota de lo que vio.
+  4. **Revisa tú la foto y escribe el conteo** en los campos de abajo. La sugerencia no se guarda sola y la IA no evalúa el tizón.
+
+  Importante: la clave se guarda solo en ese navegador, sin cifrado, y cualquiera que use ese navegador puede verla. La foto se envía a Google para analizarla; en el nivel gratuito Google puede usar lo que envías para mejorar sus productos, así que no subas fotos con personas ni datos personales. Si aparece "La clave no es válida", "Se acabó la cuota" o "Sin conexión", la app no inventa resultado: corrige la clave, espera o registra el conteo a mano.
 - **Alertas del ciclo:** una tabla con cada episodio de riesgo alto (de cuándo a cuándo, cuántos días, índice máximo) y la acción sugerida, que siempre es "monitorear", nunca un producto.
 
 #### Pestaña "Validar recomendación"
@@ -172,7 +179,7 @@ La pestaña de la transparencia. Muestra:
 
 ## Preguntas frecuentes
 
-**¿Necesito internet?** Solo para que cargue la tipografía la primera vez. El cálculo funciona sin conexión.
+**¿Necesito internet?** Solo para que cargue la tipografía la primera vez y para el análisis de fotos con IA. El cálculo funciona sin conexión.
 
 **¿Se guardan mis datos si cierro la pestaña?** Tu cuenta (correo, contraseña y tus lotes) y tu modo claro/oscuro se guardan en este navegador, para que no tengas que volver a registrar todo. El ciclo de simulación dentro de un lote (el día en el que ibas, lo que validaste, lo que anotaste en "Mi riego de hoy") no se guarda: cada vez que abres un lote, el ciclo empieza de cero. Para un uso real habría que agregar un guardado completo, en un servidor y con seguridad real.
 

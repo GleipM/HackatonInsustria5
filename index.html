@@ -196,7 +196,13 @@ td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
 .trapphoto-preview{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-start}
 .trapphoto-preview img{width:140px;height:140px;object-fit:cover;border-radius:12px;border:2px solid var(--line);background:var(--surface)}
 .trapphoto-actions{display:flex;flex-direction:column;gap:8px;align-self:center}
-#trapPhotoMsg:empty{display:none}
+#trapPhotoMsg:empty,#aiKeyMsg:empty{display:none}
+#trapPhotoMsg{white-space:pre-line}
+.aikey{margin-top:10px;border-top:1px solid var(--line);padding-top:6px}
+.aikey summary{cursor:pointer;font-weight:700;color:var(--water);min-height:44px;display:flex;align-items:center;font-size:16px}
+.aikey .f{margin-top:8px}
+.aikey a{color:var(--water);font-weight:700}
+.aikey-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
 .cammodal{position:fixed;inset:0;background:rgba(10,12,8,.72);display:flex;align-items:center;justify-content:center;padding:16px;z-index:50}
 .cammodal-box{background:var(--surface);border-radius:18px;padding:16px;width:100%;max-width:480px;box-shadow:var(--shadow)}
 .cammodal-box video{width:100%;max-height:60vh;border-radius:12px;background:#000;display:block}
@@ -833,11 +839,30 @@ td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
           <div class="trapphoto-preview" id="trapPhotoPreview" hidden>
             <img id="trapPhotoImg" alt="Foto de la trampa guardada para este día">
             <div class="trapphoto-actions">
-              <button class="btn ghost small" id="trapPhotoAnalyze" type="button">Analizar con IA (próximamente)</button>
+              <button class="btn ghost small" id="trapPhotoAnalyze" type="button">Analizar con IA</button>
               <button class="btn ghost small" id="trapPhotoRemove" type="button">Quitar foto</button>
             </div>
           </div>
-          <p class="msg" id="trapPhotoMsg"></p>
+          <p class="msg" id="trapPhotoMsg" role="status" aria-live="polite"></p>
+          <details class="aikey" id="aiKeyBox">
+            <summary>Clave de la IA de visión (Gemini)</summary>
+            <p class="msg">Para analizar fotos necesitas tu propia API key de Google Gemini. Puedes crear una gratis en <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a>.</p>
+            <label class="f">API key de Gemini
+              <span class="inputicon haseye">
+                <svg class="ic" aria-hidden="true"><use href="#i-lock"/></svg>
+                <input id="aiKeyInput" type="password" autocomplete="off" spellcheck="false" placeholder="Pega tu clave aquí">
+                <button type="button" class="eyebtn" id="aiKeyToggle" aria-label="Mostrar clave" aria-pressed="false">
+                  <svg class="ic" aria-hidden="true"><use href="#i-eye"/></svg>
+                </button>
+              </span>
+            </label>
+            <div class="aikey-actions">
+              <button class="btn ghost small" id="aiKeySave" type="button">Guardar clave</button>
+              <button class="btn ghost small" id="aiKeyClear" type="button">Borrar clave</button>
+            </div>
+            <p class="msg" id="aiKeyMsg" role="status"></p>
+            <p class="authnote"><svg class="ic" aria-hidden="true"><use href="#i-info"/></svg><span><b>Clave local y visible.</b> Se guarda solo en este navegador, sin servidor ni cifrado: cualquiera que use este navegador puede verla. Al analizar, la foto se envía directo a Google (API de Gemini). En el nivel gratuito Google puede usar lo que envías para mejorar sus productos; no subas fotos con datos personales.</span></p>
+          </details>
         </div>
         <div class="form">
           <label class="f">Tizón: plantas con síntomas<input class="trapInput" data-trap="tiz" type="number" min="0" step="1" placeholder="0"></label>
@@ -1214,8 +1239,104 @@ $("trapPhotoFile").onchange=e=>{
  e.target.value="";
 };
 $("trapPhotoRemove").onclick=()=>{delete S.trapPhotos[S.day];renderTrapPhoto()};
-$("trapPhotoAnalyze").onclick=()=>{
- $("trapPhotoMsg").textContent="La detección automática todavía no está conectada a un proveedor de visión. Por ahora, registra el conteo a mano abajo.";
+// --- detección por foto con Gemini: la clave vive solo en este navegador y el resultado es una sugerencia ---
+const AI_KEY="visionApiKey",AI_MODEL="gemini-3.8-flash";
+function readAiKey(){try{return localStorage.getItem(AI_KEY)||""}catch(e){return ""}}
+function writeAiKey(v){try{v?localStorage.setItem(AI_KEY,v):localStorage.removeItem(AI_KEY);return true}catch(e){return false}}
+function setTrapMsg(text,cls){const m=$("trapPhotoMsg");m.className="msg"+(cls?" "+cls:"");m.textContent=text}
+$("aiKeyInput").value=readAiKey();
+$("aiKeyToggle").onclick=()=>{
+ const inp=$("aiKeyInput"),show=inp.type==="password";
+ inp.type=show?"text":"password";
+ $("aiKeyToggle").setAttribute("aria-pressed",show?"true":"false");
+ $("aiKeyToggle").setAttribute("aria-label",show?"Ocultar clave":"Mostrar clave");
+ $("aiKeyToggle").querySelector("use").setAttribute("href",show?"#i-eye-off":"#i-eye");
+};
+$("aiKeySave").onclick=()=>{
+ const v=$("aiKeyInput").value.trim(),m=$("aiKeyMsg");
+ if(!v){m.className="msg bad";m.textContent="Pega una clave antes de guardar.";return}
+ if(!writeAiKey(v)){m.className="msg bad";m.textContent="Este navegador no permite guardar datos locales (¿modo privado?).";return}
+ m.className="msg ok";m.textContent="Clave guardada en este navegador.";
+};
+$("aiKeyClear").onclick=()=>{writeAiKey("");$("aiKeyInput").value="";const m=$("aiKeyMsg");m.className="msg ok";m.textContent="Clave borrada de este navegador."};
+// reduce fotos grandes para no pasar el límite de la API ni gastar datos de más
+function shrinkPhoto(url,max=1600){
+ return new Promise((ok,fail)=>{
+  const img=new Image();
+  img.onload=()=>{
+   const k=Math.min(1,max/Math.max(img.naturalWidth,img.naturalHeight)),c=document.createElement("canvas");
+   c.width=Math.round(img.naturalWidth*k);c.height=Math.round(img.naturalHeight*k);
+   c.getContext("2d").drawImage(img,0,0,c.width,c.height);
+   ok(c.toDataURL("image/jpeg",0.85));
+  };
+  img.onerror=()=>fail(new Error("img"));
+  img.src=url;
+ });
+}
+const AI_PROMPT=`Eres un apoyo para un técnico agrónomo que revisa trampas de monitoreo (trampas pegajosas amarillas o trampas de feromona) en un cultivo de jitomate en Morelos, México.
+Mira la foto y estima SOLO estas dos plagas:
+- mosquita_blanca: adultos de mosquita blanca (Bemisia tabaci o Trialeurodes vaporariorum), insectos blancos muy pequeños (1-2 mm) con alas blancas.
+- palomilla_tomate: adultos de palomilla del tomate (Tuta absoluta), polillas grises-marrones delgadas de unos 6-7 mm.
+Reglas:
+- No identifiques ninguna otra especie. Si ves otros insectos, marca otros_insectos en true sin nombrarlos.
+- Cuenta solo los individuos que se distingan con claridad. Si no estás seguro de una plaga, pon 0 y baja la confianza.
+- Si la foto no es de una trampa o no se ve lo suficiente, pon es_foto_de_trampa en false y los conteos en 0.
+- No recomiendes productos, agroquímicos ni dosis.
+- En nota escribe en español, en una o dos frases cortas, qué viste y qué limita la estimación (enfoque, luz, distancia).`;
+const AI_SCHEMA={type:"OBJECT",properties:{
+ es_foto_de_trampa:{type:"BOOLEAN"},
+ mosquita_blanca:{type:"INTEGER",description:"Adultos de mosquita blanca visibles; 0 si no se distinguen."},
+ palomilla_tomate:{type:"INTEGER",description:"Adultos de palomilla del tomate visibles; 0 si no se distinguen."},
+ otros_insectos:{type:"BOOLEAN"},
+ confianza:{type:"STRING",enum:["baja","media","alta"]},
+ nota:{type:"STRING"}},
+ required:["es_foto_de_trampa","mosquita_blanca","palomilla_tomate","otros_insectos","confianza","nota"]};
+async function analyzeTrapPhoto(url,key){
+ const small=await shrinkPhoto(url),[head,data]=small.split(",");
+ let res;
+ try{
+  res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${AI_MODEL}:generateContent`,{
+   method:"POST",
+   headers:{"content-type":"application/json","x-goog-api-key":key},
+   body:JSON.stringify({
+    contents:[{parts:[{inline_data:{mime_type:head.slice(5,head.indexOf(";")),data}},{text:AI_PROMPT}]}],
+    generationConfig:{responseMimeType:"application/json",responseSchema:AI_SCHEMA}})});
+ }catch(e){throw new Error("Sin conexión con Gemini. Revisa tu internet e intenta de nuevo.")}
+ const body=await res.json().catch(()=>null);
+ if(!res.ok){
+  const detail=body&&body.error&&body.error.message||"";
+  if(res.status===400&&/api key/i.test(detail))throw new Error("La clave no es válida. Revísala en «Clave de la IA de visión».");
+  if(res.status===401||res.status===403)throw new Error("Google rechazó la clave (sin permiso para la API de Gemini). Revísala en «Clave de la IA de visión».");
+  if(res.status===429)throw new Error("Se acabó la cuota de tu clave por ahora. Espera un momento o revisa tu plan en Google AI Studio.");
+  throw new Error(`Gemini respondió con un error (${res.status})${detail?": "+detail:""}.`);
+ }
+ if(body&&body.promptFeedback&&body.promptFeedback.blockReason)throw new Error("Gemini bloqueó el análisis de esta foto. Registra el conteo a mano.");
+ const cand=body&&body.candidates&&body.candidates[0],text=cand&&cand.content&&cand.content.parts&&cand.content.parts.map(p=>p.text||"").join("");
+ if(!text)throw new Error(`Gemini no devolvió un resultado${cand&&cand.finishReason?" ("+cand.finishReason+")":""}. Intenta con otra foto.`);
+ let r;try{r=JSON.parse(text)}catch(e){throw new Error("La respuesta de Gemini no se pudo leer. Intenta de nuevo.")}
+ const n=v=>Number.isInteger(v)&&v>=0?v:null;
+ return {trampa:r.es_foto_de_trampa===true,mos:n(r.mosquita_blanca),tuta:n(r.palomilla_tomate),otros:r.otros_insectos===true,conf:["baja","media","alta"].includes(r.confianza)?r.confianza:"baja",nota:typeof r.nota==="string"?r.nota.trim():""};
+}
+$("trapPhotoAnalyze").onclick=async()=>{
+ const day=S.day,url=S.trapPhotos[day],key=readAiKey(),btn=$("trapPhotoAnalyze");
+ if(!url)return;
+ if(!key){
+  setTrapMsg("Falta tu API key de Gemini. Pégala abajo, en «Clave de la IA de visión», y vuelve a intentar.","bad");
+  $("aiKeyBox").open=true;$("aiKeyInput").focus();return;
+ }
+ btn.disabled=true;btn.textContent="Analizando…";
+ setTrapMsg("Enviando la foto a Gemini…");
+ let out,err;
+ try{out=await analyzeTrapPhoto(url,key)}catch(e){err=e}
+ btn.disabled=false;btn.textContent="Analizar con IA";
+ if(S.day!==day||S.trapPhotos[day]!==url)return; // cambió el día o la foto mientras esperábamos
+ if(err){setTrapMsg(err.message,"bad");return}
+ const nota=out.nota?`\nNota de la IA: ${out.nota}`:"";
+ if(!out.trampa){setTrapMsg(`La IA no reconoce una trampa legible en esta foto, así que no sugiere conteos. Prueba con otra foto más cerca y con buena luz, o registra el conteo a mano.${nota}`);return}
+ const parts=[];
+ if(out.mos!=null)parts.push(`${PNAMES.mos}: ~${out.mos}`);
+ if(out.tuta!=null)parts.push(`${PNAMES.tuta}: ~${out.tuta}`);
+ setTrapMsg(`La IA sugiere (confianza ${out.conf}): ${parts.join(", ")||"sin conteo legible"}.${out.otros?" También ve otros insectos que no clasifica.":""}${nota}\nEs una sugerencia pendiente de validar: revisa la foto y escribe tú el conteo abajo. No se guarda sola, y la IA no evalúa el tizón.`);
 };
 function renderRecoT(){
  const d=recoData(),P=S.p,c=d.c,e=logEntry(d.i),cl={ok:"ok",bajo:"ok",medio:"warn",alto:"bad"};
