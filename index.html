@@ -192,6 +192,12 @@ td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
 .landhero-main{padding-top:4px;padding-bottom:28px}
 .landnav{display:none}
 .landhero-content{max-width:620px;margin:30px auto 0;text-align:center}
+@media (min-width:900px){
+ .landhero-content{max-width:1040px;display:grid;grid-template-columns:1.05fr .95fr;gap:52px;align-items:center;text-align:left;margin-top:50px}
+ .herotext{text-align:left}
+ .herotext .landctas,.herotext .landstats{justify-content:flex-start}
+ .heropreview{margin:0 auto;max-width:340px}
+}
 .landbadge{display:inline-flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:6px 16px;font-size:14px;font-weight:700;color:var(--leaf);box-shadow:var(--shadow)}
 .landbadge .ic{width:16px;height:16px}
 .landhero-content h1{font-size:32px;margin-top:18px;line-height:1.15}
@@ -312,18 +318,20 @@ td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
 
     <div class="wrap landhero-main">
       <div class="landhero-content">
-        <span class="landbadge"><svg class="ic" aria-hidden="true"><use href="#i-leaf"/></svg>Valle Cuautla–Ayala–Yautepec, Morelos</span>
-        <h1>Riego y plagas, <span class="hl">sin adivinar</span></h1>
-        <p class="sub">Simulador de riego y monitoreo de plagas para jitomate, con cada recomendación pendiente de validar por un técnico — para técnicos que buscan una herramienta para sus clientes, y para productores que quieren decidir con datos.</p>
-        <div class="landctas">
-          <button class="btn" id="landingStart" type="button">Ver mis lotes</button>
-          <button class="btn ghost" id="landingDemo" type="button">Ver demo con datos de ejemplo</button>
-        </div>
-        <p class="sub" style="font-size:14px;margin-top:10px">La demo entra directo con 3 lotes de ejemplo ya cargados, para ver el resumen funcionando sin capturar nada.</p>
-        <div class="landstats">
-          <span><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>ETo con método FAO-56</span>
-          <span><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>3 índices de plagas</span>
-          <span><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Validación técnica obligatoria</span>
+        <div class="herotext">
+          <span class="landbadge"><svg class="ic" aria-hidden="true"><use href="#i-leaf"/></svg>Valle Cuautla–Ayala–Yautepec, Morelos</span>
+          <h1>Riego y plagas, <span class="hl">sin adivinar</span></h1>
+          <p class="sub">Simulador de riego y monitoreo de plagas para jitomate, con cada recomendación pendiente de validar por un técnico — para técnicos que buscan una herramienta para sus clientes, y para productores que quieren decidir con datos.</p>
+          <div class="landctas">
+            <button class="btn" id="landingStart" type="button">Ver mis lotes</button>
+            <button class="btn ghost" id="landingDemo" type="button">Ver demo con datos de ejemplo</button>
+          </div>
+          <p class="sub" style="font-size:14px;margin-top:10px">La demo entra directo con 3 lotes de ejemplo ya cargados, para ver el resumen funcionando sin capturar nada.</p>
+          <div class="landstats">
+            <span><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>ETo con método FAO-56</span>
+            <span><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>3 índices de plagas</span>
+            <span><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Validación técnica obligatoria</span>
+          </div>
         </div>
         <div class="heropreview">
           <div class="heropreview-tag">Así se ve en el celular</div>
