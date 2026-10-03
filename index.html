@@ -1330,7 +1330,7 @@ async function analyzeTrapPhotoOnce(head,data,key){
 }
 async function analyzeTrapPhoto(url,key,onRetry){
  const small=await shrinkPhoto(url),[head,data]=small.split(",");
- const MAXTRIES=3,DELAYS=[1500,3000];
+ const MAXTRIES=4,DELAYS=[1500,3000,5000];
  for(let attempt=1;attempt<=MAXTRIES;attempt++){
   try{return await analyzeTrapPhotoOnce(head,data,key)}
   catch(e){
