@@ -198,6 +198,12 @@ td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
  .herotext .landctas,.herotext .landstats{justify-content:flex-start}
  .heropreview{margin:0 auto;max-width:340px}
 }
+@media (min-width:1280px){
+ #landingWrap .wrap:not(.wide){max-width:1220px}
+ .landhero-content{max-width:1220px;gap:80px}
+ .herotext{max-width:540px}
+ .heropreview{max-width:420px}
+}
 .landbadge{display:inline-flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:6px 16px;font-size:14px;font-weight:700;color:var(--leaf);box-shadow:var(--shadow)}
 .landbadge .ic{width:16px;height:16px}
 .landhero-content h1{font-size:32px;margin-top:18px;line-height:1.15}
@@ -321,7 +327,7 @@ td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
         <div class="herotext">
           <span class="landbadge"><svg class="ic" aria-hidden="true"><use href="#i-leaf"/></svg>Valle Cuautla–Ayala–Yautepec, Morelos</span>
           <h1>Riego y plagas, <span class="hl">sin adivinar</span></h1>
-          <p class="sub">Simulador de riego y monitoreo de plagas para jitomate, con cada recomendación pendiente de validar por un técnico — para técnicos que buscan una herramienta para sus clientes, y para productores que quieren decidir con datos.</p>
+          <p class="sub">Simulador de riego y monitoreo de plagas para tus cultivos, con cada recomendación pendiente de validar por un técnico — para técnicos que buscan una herramienta para sus clientes, y para productores que quieren decidir con datos.</p>
           <div class="landctas">
             <button class="btn" id="landingStart" type="button">Ver mis lotes</button>
             <button class="btn ghost" id="landingDemo" type="button">Ver demo con datos de ejemplo</button>
@@ -344,6 +350,12 @@ td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
             <div class="gtitle" style="margin:12px 0 5px;font-size:14px"><span>Agua en el suelo</span><span>58%</span></div>
             <div class="gbar" style="height:18px;border-radius:9px"><i class="r" style="width:40%"></i><i class="a" style="width:15%"></i><i class="g" style="width:45%"></i></div>
             <span class="status pend" style="margin-top:10px;font-size:13.5px"><svg class="ic sm" aria-hidden="true"><use href="#i-clock"/></svg>Falta que tu técnico la confirme</span>
+          </div>
+          <div class="heropreview-card" style="margin-top:14px">
+            <div class="overall medio" style="margin:0;padding:12px">
+              <svg class="ic" aria-hidden="true" style="width:28px;height:28px"><use href="#i-tri"/></svg>
+              <div><h3 style="font-size:15.5px">Riesgo medio de plagas</h3><p class="sub" style="font-size:13px">Revisa tu lote como siempre.</p></div>
+            </div>
           </div>
         </div>
       </div>
