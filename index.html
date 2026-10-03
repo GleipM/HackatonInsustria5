@@ -36,6 +36,12 @@ button,input,select,textarea{font:inherit;color:inherit}
 .topbar{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:space-between;padding:6px 0 14px}
 .brand{display:flex;align-items:center;gap:10px;font-size:22px;font-weight:700;color:var(--leaf)}
 .brand img{height:1.5em;width:auto;flex:none}
+/* La marca funciona como botón para volver a la portada, como en cualquier
+   sitio. Se le quita el aspecto de botón pero conserva foco y teclado. */
+button.brand{background:none;border:0;padding:0;font:inherit;cursor:pointer;text-align:left}
+button.brand:hover span{text-decoration:underline}
+.volverlink{background:none;border:0;padding:6px 8px;font:inherit;font-size:15.5px;color:var(--muted);cursor:pointer;min-height:40px}
+.volverlink:hover{color:var(--water);text-decoration:underline}
 .topctrls{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
 .seg{display:inline-flex;border:2px solid var(--line);border-radius:14px;overflow:hidden;background:var(--surface)}
 .seg button{border:0;background:none;padding:12px 18px;min-height:48px;cursor:pointer;font-weight:700;color:var(--muted)}
@@ -521,14 +527,14 @@ td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
 <div id="authWrap" hidden>
   <div class="authgrid">
     <div class="authmobile-top">
-      <div class="brand"><img src="logo-icon.png" alt="" aria-hidden="true"><span>RaizNorte</span></div>
+      <button class="brand" type="button" data-irLanding aria-label="Volver a la portada de RaizNorte"><img src="logo-icon.png" alt="" aria-hidden="true"><span>RaizNorte</span></button>
       <button id="themeToggle5" class="btn ghost iconbtn" type="button" aria-label="Cambiar a modo oscuro">
         <svg class="ic" aria-hidden="true"><use href="#i-moon" id="themeIconUse5"/></svg>
       </button>
     </div>
     <aside class="authside">
       <div class="authside-top">
-        <div class="brand"><img src="logo-icon.png" alt="" aria-hidden="true"><span>RaizNorte</span></div>
+        <button class="brand" type="button" data-irLanding aria-label="Volver a la portada de RaizNorte"><img src="logo-icon.png" alt="" aria-hidden="true"><span>RaizNorte</span></button>
         <button id="themeToggle4" class="btn ghost iconbtn" type="button" aria-label="Cambiar a modo oscuro">
           <svg class="ic" aria-hidden="true"><use href="#i-moon" id="themeIconUse4"/></svg>
         </button>
@@ -570,6 +576,7 @@ td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
         <p class="msg bad" id="loginMsg" role="status"></p>
         <button class="btn" id="loginSubmit" type="button" style="width:100%;margin-top:6px">Entrar</button>
         <p style="margin-top:16px;text-align:center"><button class="btn ghost small" id="guestEnter" type="button">Seguir sin cuenta</button></p>
+        <p style="margin-top:10px;text-align:center"><button class="volverlink" type="button" data-irLanding>← Volver a la portada</button></p>
         <p class="authnote"><svg class="ic" aria-hidden="true"><use href="#i-info"/></svg><span><b>Cuenta local de esta demo.</b> Tu correo y contraseña se guardan solo en este navegador, sin servidor ni cifrado. No uses una contraseña que uses en otros sitios.</span></p>
       </div>
     </main>
@@ -579,7 +586,7 @@ td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
 <!-- ====== PANTALLA DE INICIO: RESUMEN + MIS LOTES ====== -->
 <div class="wrap" id="homeWrap" hidden>
   <div class="topbar">
-    <div class="brand"><img src="logo-icon.png" alt="" aria-hidden="true"><span>RaizNorte</span></div>
+    <button class="brand" type="button" data-irLanding aria-label="Volver a la portada de RaizNorte"><img src="logo-icon.png" alt="" aria-hidden="true"><span>RaizNorte</span></button>
     <div class="topctrls">
       <button id="themeToggle2" class="btn ghost iconbtn" type="button" aria-label="Cambiar a modo oscuro">
         <svg class="ic" aria-hidden="true"><use href="#i-moon" id="themeIconUse2"/></svg>
@@ -665,7 +672,7 @@ td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
 
 <div class="wrap" id="wrap" hidden>
 <div class="topbar">
-  <div class="brand"><img src="logo-icon.png" alt="" aria-hidden="true"><span>RaizNorte</span></div>
+  <button class="brand" type="button" data-irLanding aria-label="Volver a la portada de RaizNorte"><img src="logo-icon.png" alt="" aria-hidden="true"><span>RaizNorte</span></button>
   <div class="topctrls">
     <button id="backHomeBtn" class="btn ghost small" type="button" hidden>← Mis lotes</button>
     <div class="seg" role="group" aria-label="Quién usa la pantalla">
@@ -1547,8 +1554,16 @@ $("pwToggle").onclick=()=>{
 };
 
 $("guestEnter").onclick=()=>{ACC.sessionId=null;enterApp()};
-$("acctLogout").onclick=()=>{ACC.sessionId=null;saveAcc(ACC);showAuth()};
-$("acctLogout2").onclick=()=>{ACC.sessionId=null;saveAcc(ACC);showAuth()};
+// Al salir se vuelve a la portada, no al formulario de acceso: es la página
+// pública del producto y desde ahí se puede volver a entrar.
+function cerrarSesion(){ACC.sessionId=null;saveAcc(ACC);CURRENT_LOTE=null;updateAcctChip();setScreen("landing")}
+$("acctLogout").onclick=cerrarSesion;
+$("acctLogout2").onclick=cerrarSesion;
+
+// La marca y el enlace del acceso devuelven a la portada desde cualquier pantalla.
+document.querySelectorAll("[data-irLanding]").forEach(b=>{
+ b.onclick=()=>{setScreen("landing");window.scrollTo(0,0)};
+});
 $("acctCreateBtn").onclick=()=>showAuth();
 
 function setScreen(which){
