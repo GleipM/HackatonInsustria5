@@ -897,7 +897,7 @@ const MS=864e5;
 const MON_TMAX=[29,31,33,34,34,31,30,30,29,29,29,28];
 const MON_TMIN=[11,12,14,16,17,18,17,17,17,15,12,11];
 const MON_RAINP=[.04,.04,.04,.08,.2,.5,.55,.55,.6,.3,.08,.04];
-const DEF={lat:18.8,Lini:30,Ldev:40,Lmid:45,Llate:30,Kcini:.6,Kcmid:1.15,Kcend:.8,p:.4,Ky:1.05,rainEff:.8,rainMin:5,
+const DEF={lat:18.8,Lini:30,Ldev:40,Lmid:40,Llate:25,Kcini:.6,Kcmid:1.15,Kcend:.8,p:.4,Ky:1.05,rainEff:.8,rainMin:5,
  trigger:1,defTrig:.5,invFactor:.8,TAW:80,Ea:85,calDays:3,calDepth:14,
  medT:35,altoT:65,tizMin:12,tizMax:22,mosMin:26,mosMax:32,tutaBase:8,tutaRef:22};
 const SUELOS={arenoso:50,franco:80,arcilloso:110},RIEGOS={goteo:85,aspersion:75,surco:60};
@@ -907,8 +907,8 @@ const PDEF=[
  ["Ldev","Desarrollo (días)",1,"v","FAO-56, Tabla 11: tomate, ejemplo de clima árido, 40 días; validar localmente."],["Lmid","Etapa media (días)",1,"v","FAO-56, Tabla 11: tomate, ejemplo de clima árido, 40 días; validar localmente."],["Llate","Etapa final (días)",1,"v","FAO-56, Tabla 11: tomate, ejemplo de clima árido, 25 días; validar localmente."],
  ["Kcini","Kc inicial",.05,"v","FAO-56, Tabla 12: tomate, Kc inicial 0.60; el ajuste por frecuencia de mojado sigue pendiente."],
  ["Kcmid","Kc de etapa media",.05,"v","FAO-56, Tabla 12: tomate, Kc medio 1.15; el ajuste climático local sigue pendiente."],["Kcend","Kc final",.05,"v","FAO-56, Tabla 12: tomate, Kc final 0.70-0.90; v3 usa 0.80 como punto de referencia."],
- ["p","Agotamiento permisible (fracción)",.05,"p","FAO-56, capítulo 8 define RAW=p×TAW; 0.40 es arranque editable, no validación de Morelos."],
- ["Ky","Sensibilidad al estrés (Ky)",.05,"p","1.05 se conserva del prototipo; no se localizó una tabla verificable específica para jitomate Morelos."],
+ ["p","Agotamiento permisible (fracción)",.05,"v","FAO-56, Tabla 22: tomate, p = 0.40 (para ETc≈5 mm/día); FAO da una fórmula de ajuste que v3 no aplica, y falta validar con el manejo real del lote."],
+ ["Ky","Sensibilidad al estrés (Ky)",.05,"v","FAO 33 (Doorenbos y Kassam): tomate, Ky = 1.05 para el ciclo completo, confirmado por fuentes académicas que citan esa tabla; falta validar con la variedad y el manejo de Morelos."],
  ["rainEff","Lluvia efectiva (fracción)",.05,"s","Parte de la lluvia que llega a la zona de raíces."],
  ["rainMin","Lluvia mínima útil (mm)",1,"s","Debajo de este valor se ignora la lluvia."],
  ["trigger","Umbral del riego de balance (× agotamiento permisible)",.05,"s","1 riega cuando se llega justo al límite sin estrés."],
@@ -1055,7 +1055,8 @@ function recoData(){
 function logEntry(i){return S.log.find(x=>x.i===i)}
 function ensureEntry(d){let e=logEntry(d.i);
  const base={i:d.i,date:d.c.date,riego:d.irr>0?`Regar ${nf(d.irr,1)} mm`:"No regar",plaga:d.hi.length?"Monitorear":"Sin alerta"};
- if(!e){e=Object.assign(base,{estado:"Pendiente",aplicado:null});S.log.push(e);S.log.sort((x,y)=>x.i-y.i)}else Object.assign(e,base);return e}
+ if(!e){e=Object.assign(base,{estado:"Pendiente",aplicado:null,ajuste:null});S.log.push(e);S.log.sort((x,y)=>x.i-y.i)}else Object.assign(e,base);return e}
+function effIrr(d,e){return (e&&e.estado==="Validada"&&e.ajuste!=null)?e.ajuste:d.irr}
 
 /* ---------- vista productor ---------- */
 function renderProd(){
@@ -1068,7 +1069,7 @@ function renderProd(){
  if(CURRENT_LOTE)loteChips.unshift(CURRENT_LOTE.nombre);
  $("loteChips").innerHTML=loteChips.map(t=>`<span class="chip">${esc(t)}</span>`).join("");
  /* riego */
- const e=logEntry(d.i);
+ const e=logEntry(d.i),mmE=effIrr(d,e);
  let stat;
  if(!e||e.estado==="Pendiente")stat=`<span class="status pend">${ic("clock","sm")} Falta que tu técnico la confirme</span>`;
  else if(e.estado==="Validada")stat=`<span class="status ok">${ic("check","sm")} Confirmada por tu técnico</span>`;
@@ -1078,16 +1079,16 @@ function renderProd(){
   <div class="gbar" role="img" aria-label="Agua en el suelo: ${nf(pct)} por ciento. Hay que regar cuando baja de ${nf(thr)} por ciento."><i class="r" style="width:${thr}%"></i><i class="a" style="width:${amberTo-thr}%"></i><i class="g" style="width:${100-amberTo}%"></i><span class="gmark" style="left:calc(${pct}% - 3px)"></span></div>
   <div class="glabels"><span>Falta agua</span><span>Ya casi toca regar</span><span>Bien</span></div>`;
  const rain=(S.system==="campo"&&c.rain>=P.rainMin)?`<p class="rain">${ic("rain")} Hoy llovió ${nf(c.rain)} mm. Eso ya ayuda a tu cultivo.</p>`:"";
- if(d.irr>0){
-  const mm=d.irr,m3=mm/d.Ea*10;
+ if(mmE>0){
+  const mm=mmE,m3=mm/d.Ea*10;
   $("pRiegoCard").innerHTML=`<div class="sign">${ic("drop","lg")}<div><div class="kick">Hoy en tu lote</div><h2>Sí, hoy toca regar</h2></div></div>
    <div class="amount"><span class="num">${nf(mm)}</span><span class="unit">litros por m²</span></div>
    <p class="eq">Con tu forma de regar son unos <b>${nf(m3)} m³ por hectárea</b> (como ${nf(m3/10)} pipas de 10,000 litros).</p>
    ${gauge}${rain}${stat}`;
  }else{
-  const dt=new Date(c.date.getFullYear(),c.date.getMonth(),c.date.getDate()+d.dias);
+  const proximo=d.dias!=null?(()=>{const dt=new Date(c.date.getFullYear(),c.date.getMonth(),c.date.getDate()+d.dias);return `Tu suelo todavía tiene agua. El próximo riego sería <b>${fmtDL(dt)}</b>, en unos ${d.dias} ${d.dias===1?"día":"días"}.`})():"Tu técnico decidió no regar hoy.";
   $("pRiegoCard").innerHTML=`<div class="sign no">${ic("check","lg")}<div><div class="kick">Hoy en tu lote</div><h2>Hoy no riegues</h2></div></div>
-   <p class="eq" style="margin-top:14px;font-size:18px;color:var(--ink)">Tu suelo todavía tiene agua. El próximo riego sería <b>${fmtDL(dt)}</b>, en unos ${d.dias} ${d.dias===1?"día":"días"}.</p>
+   <p class="eq" style="margin-top:14px;font-size:18px;color:var(--ink)">${proximo}</p>
    ${gauge}${rain}${stat}`;
  }
  /* plagas */
@@ -1121,8 +1122,8 @@ function renderProd(){
   <p style="margin-top:14px;${cls}">${msg}</p>${dW>=.03*cal.water?`<p class="eq">Es como ${nf(dW/10)} pipas de 10,000 litros.</p>`:""}${pesos}${totalHa}
   <p class="eq" style="margin-top:10px">El ahorro depende de cómo riegas hoy. Si cambias los datos de tu lote, la cuenta se actualiza.</p>`;
  /* registro */
- const ap=e&&e.aplicado!=null?e.aplicado:null,defv=d.irr>0?Math.round(d.irr):0;
- $("pRegistro").innerHTML=`<h2>Mi riego de hoy</h2><p class="sub">Anota lo que regaste para que tu técnico lo vea.</p>`+
+ const ap=e&&e.aplicado!=null?e.aplicado:null,defv=mmE>0?Math.round(mmE):0;
+ $("pRegistro").innerHTML=`<h2>Mi riego de hoy</h2><p class="sub">Anota lo que de verdad aplicaste, coincida o no con la recomendación. Tu técnico lo ve junto al número que confirmó, en la bitácora de su vista. Sirve para que ambos sepan si el riego real se quedó corto, se pasó, o fue igual a lo acordado.</p>`+
   (ap!=null?`<p class="big" style="color:var(--ink)">Anotado: regaste ${nf(ap)} litros por m².</p>`:"")+
   `<div style="display:flex;flex-wrap:wrap;gap:12px;align-items:end;margin-top:12px"><label class="f" style="min-width:210px;flex:1">¿Cuánto regaste? (litros por m²)<input id="pAplicado" type="number" min="0" step="1" inputmode="numeric" value="${ap!=null?ap:defv}"></label>
   <button class="btn" id="pGuardar" type="button">${ic("check","sm")} Guardar</button></div><p class="eq" style="margin-top:8px">Si hoy no regaste, deja 0. En la demostración no se guarda al cerrar la página.</p>`;
@@ -1220,16 +1221,23 @@ function renderRecoT(){
  const d=recoData(),P=S.p,c=d.c,e=logEntry(d.i),cl={ok:"ok",bajo:"ok",medio:"warn",alto:"bad"};
  const riego=d.irr>0?`Regar hoy: lámina neta de <b>${nf(d.irr,1)} mm</b>, unos <b>${nf(d.irr/d.Ea*10)} m³/ha</b> bombeados con eficiencia de ${nf(P.Ea)}%.`:`No regar hoy. Agotamiento de ${nf(d.dr,1)} mm; límite sin estrés de ${nf(d.RAW*P.trigger,1)} mm. Próximo riego en unos <b>${d.dias} ${d.dias===1?"día":"días"}</b>.`;
  const est=e?e.estado:"Pendiente";
+ const ajusteVal=Math.max(0,Math.round(e&&e.ajuste!=null?e.ajuste:d.irr));
+ const huboAjuste=e&&e.estado==="Validada"&&e.ajuste!=null&&Math.round(e.ajuste)!==Math.round(d.irr);
  $("reco").innerHTML=`<div class="reco"><div class="head"><h3 style="font-size:20px">${esc(cap(fmtDL(c.date)))}, día ${d.i+1} (${STAGE_T[stageIdx(d.i,P)]})</h3><span class="cl ${est==="Validada"?"ok":(est==="Rechazada"?"bad":"warn")}">${est==="Pendiente"?"Pendiente de validación":est+" por el técnico"}</span></div>
   <p style="margin-bottom:6px">${riego}</p>
   <p>${d.hi.length?`Riesgo <b>alto</b> de ${d.hi.map(x=>PNAMES[x.k].toLowerCase()).join(" y ")}: monitorear trampas u hojas en las próximas 48 horas.`:(d.items[0].c==="medio"?`Riesgo medio de ${PNAMES[d.items[0].k].toLowerCase()}: mantener el muestreo habitual.`:"Riesgo bajo en los tres índices: sin alerta.")}</p>
   <ul><li>Demanda del cultivo: ${nf(c.etc,1)} mm (ETo ${nf(c.eto,1)} mm × Kc ${nf(c.kc,2)}).</li><li>Temperatura ${nf(c.tmin,1)} a ${nf(c.tmax,1)} °C, lluvia ${nf(c.rain,1)} mm${S.system==="inv"?" (invernadero: no entra al cultivo)":""}.</li>
-  <li>Índices: ${d.items.map(x=>`${PNAMES[x.k]} ${nf(x.v)} <span class="cl ${cl[x.c]}">${x.c}</span>`).join(", ")}.</li>${e&&e.aplicado!=null?`<li>El productor anotó ${nf(e.aplicado)} litros por m² aplicados.</li>`:""}</ul>
+  <li>Índices: ${d.items.map(x=>`${PNAMES[x.k]} ${nf(x.v)} <span class="cl ${cl[x.c]}">${x.c}</span>`).join(", ")}.</li>${huboAjuste?`<li>Confirmaste un ajuste: <b>${nf(e.ajuste)} litros por m²</b> en vez de los ${nf(d.irr,1)} que calculó el modelo.</li>`:""}${e&&e.aplicado!=null?`<li>El productor anotó ${nf(e.aplicado)} litros por m² aplicados.</li>`:""}</ul>
   <p class="msg" style="margin-top:10px">Nunca se recomienda un agroquímico: una alerta solo dice que hay que monitorear.</p>
+  <div class="fieldbox" style="margin-top:12px">
+   <label class="f full">Litros por m² que confirmas al productor<input id="recoAjuste" type="number" min="0" step="1" value="${ajusteVal}"></label>
+   <p class="msg">Es un número editable (1 mm = 1 litro por m²). Si lo cambias y validas, tu productor ve el número que tú confirmes, no el que calculó el modelo; eso queda anotado en la bitácora.</p>
+  </div>
   <div class="actions"><button class="btn" id="bval" type="button">Validar recomendación</button><button class="btn ghost" id="brech" type="button">Rechazar</button></div></div>`;
- $("bval").onclick=()=>setEstado("Validada");$("brech").onclick=()=>setEstado("Rechazada");
+ $("bval").onclick=()=>{const v=parseFloat($("recoAjuste").value);setEstado("Validada",isNaN(v)||v<0?0:v)};
+ $("brech").onclick=()=>setEstado("Rechazada",null);
  if(!S.log.length){$("bitacora").innerHTML=`<tr><td>Aún no hay registros. Valida o rechaza la recomendación del día, o espera a que el productor anote su riego.</td></tr>`;$("usoReco").textContent="";renderCycleSummary();return}
- $("bitacora").innerHTML=`<tr><th>Fecha</th><th>Riego recomendado</th><th>Plagas</th><th>Decisión del técnico</th><th>Lo que anotó el productor</th></tr>`+S.log.map(x=>`<tr><td>${fmtD(x.date)}</td><td>${esc(x.riego)}</td><td>${x.plaga}</td><td>${x.estado}</td><td class="num">${x.aplicado==null?"—":nf(x.aplicado)+" L/m²"}</td></tr>`).join("");
+ $("bitacora").innerHTML=`<tr><th>Fecha</th><th>Riego recomendado por el modelo</th><th>Decisión del técnico</th><th>Confirmado al productor</th><th>Lo que aplicó el productor</th><th>Plagas</th></tr>`+S.log.map(x=>`<tr><td>${fmtD(x.date)}</td><td>${esc(x.riego)}</td><td>${x.estado}</td><td class="num">${x.estado==="Validada"&&x.ajuste!=null?nf(x.ajuste)+" L/m²":"—"}</td><td class="num">${x.aplicado==null?"—":nf(x.aplicado)+" L/m²"}</td><td>${x.plaga}</td></tr>`).join("");
  const dec=S.log.filter(x=>x.estado!=="Pendiente"),v=dec.filter(x=>x.estado==="Validada").length;
  $("usoReco").textContent=dec.length?`Uso de la recomendación: ${nf(v/dec.length*100)}% validadas (${v} de ${dec.length} decididas). En el piloto este registro serviría para calibrar el modelo; en la demo no se guarda.`:"";
  renderCycleSummary();
@@ -1239,9 +1247,9 @@ function renderCycleSummary(){
  const r=S.riegoMode==="goteo"?S.sim.drip:S.sim.bal,ah=S.sim.cal.water-r.water;
  $("usoReco").insertAdjacentHTML("afterend",`<div class="fieldbox" id="cycleSummary"><h3>Resumen del ciclo</h3><div class="metric"><div><b>${nf(r.water)} m³/ha</b>agua usada en ${S.riegoMode==="goteo"?"goteo":"balance"}</div><div><b>${ah>=0?"−":"+"}${nf(Math.abs(ah))} m³/ha</b>${ah>=0?"ahorro":"diferencia"} frente al calendario</div><div><b>${r.stress}</b>días con estrés · ${S.alerts.length} alertas emitidas</div></div><p class="msg">Resumen calculado con datos ${S.clima==="csv"?"cargados por CSV":"de ejemplo"}. No representa resultados de producción.</p></div>`);
 }
-function setEstado(estado){const d=recoData(),e=ensureEntry(d);e.estado=estado;renderAll()}
+function setEstado(estado,ajuste){const d=recoData(),e=ensureEntry(d);e.estado=estado;e.ajuste=estado==="Validada"?ajuste:null;renderAll()}
 function renderSupT(){
- const rows=[["Evapotranspiración de referencia (ETo)","v","Método de Hargreaves–Samani con temperaturas diarias; calibración local pendiente."],["Balance de agua en la zona de raíces","v","Balance diario con agotamiento permisible, método estándar de la FAO."],["Rendimiento relativo","p","Relación lineal de Doorenbos y Kassam con Ky de referencia; sirve para comparar estrategias, no para predecir cosecha."],["Kc y etapas","v","Referencia FAO-56, Tablas 11 y 12; validar variedad, fecha y manejo local."],["p y Ky","p","p=0.40 y Ky=1.05 son editables; falta validación local y fuente INIFAP específica."],["Clima","s","Sintético para ejemplo, o el CSV que cargues. Sustituir por datos de una estación cercana (SMN o CONAGUA)."],["Calendario del productor","s","Supuesto de la demo; sin entrevista a productores."],["Sensor y eficiencia de riego","s","La humedad es captura manual y la eficiencia es ejemplo; medir en la parcela."],["Índices de plagas y umbrales","s","Reglas sencillas de temperatura y lluvia; conteos y fitopatología pendientes."]];
+ const rows=[["Evapotranspiración de referencia (ETo)","v","Método de Hargreaves–Samani con temperaturas diarias; calibración local pendiente."],["Balance de agua en la zona de raíces","v","Balance diario con agotamiento permisible, método estándar de la FAO."],["Rendimiento relativo","p","Relación lineal de Doorenbos y Kassam con Ky de referencia; sirve para comparar estrategias, no para predecir cosecha."],["Kc y etapas","v","Referencia FAO-56, Tablas 11 y 12; validar variedad, fecha y manejo local."],["p y Ky","v","FAO-56 Tabla 22 (p=0.40) y FAO 33 Doorenbos-Kassam (Ky=1.05) para tomate; ambos editables y pendientes de validación local y fuente INIFAP específica."],["Clima","s","Sintético para ejemplo, o el CSV que cargues. Sustituir por datos de una estación cercana (SMN o CONAGUA)."],["Calendario del productor","s","Supuesto de la demo; sin entrevista a productores."],["Eficiencia de riego","v","Aspersión 75% y surco 60% coinciden con la tabla indicativa de FAO; goteo 85% es conservador frente al 90% indicativo. Falta medir caudal, presión y uniformidad en campo."],["Agua disponible en el suelo por textura (TAW)","p","50/80/110 mm para arenoso/franco/arcilloso; no se pudo verificar la tabla oficial de FAO-56 en este entorno."],["Sensor de humedad","s","La humedad es captura manual; no hay sensor físico conectado."],["Índices de plagas y umbrales","s","Reglas sencillas de temperatura y lluvia; conteos y fitopatología pendientes."]];
  const lab={v:"Método",s:"Ejemplo",p:"Por confirmar"};
  $("supTabla").innerHTML=`<tr><th>Componente</th><th>Estado</th><th>Detalle</th></tr>`+rows.map(r=>`<tr><td>${r[0]}</td><td><span class="tag ${r[1]}">${lab[r[1]]}</span></td><td>${r[2]}</td></tr>`).join("");
 }
