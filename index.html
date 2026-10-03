@@ -1549,9 +1549,8 @@ function goStart(){
  if(currentAcc()){setScreen("home");homeTab="dash";renderHome()}
  else{showAuth()}
 }
-$("landingStart").onclick=goStart;
-$("landingStart2").onclick=goStart;
-$("landingNavCTA").onclick=goStart;
+// Los manejadores de estos botones se asignan más abajo, envueltos en
+// accionLanding para que un fallo nunca quede en silencio.
 
 /* ---- cuenta de demostración con lotes precargados ---- */
 const DEMO_EMAIL="demo@mivalle.mx",DEMO_PASS="demo1234";
@@ -1570,8 +1569,31 @@ function goDemo(){
  ACC.sessionId=acc.id;saveAcc(ACC);
  enterApp();
 }
-$("landingDemo").onclick=goDemo;
-$("landingDemo2").onclick=goDemo;
+// Si algo falla al entrar (una copia vieja en caché, almacenamiento bloqueado,
+// datos corruptos de una versión anterior), el botón no puede quedarse mudo:
+// delante de un público eso parece que la demo no sirve. Se muestra el motivo
+// y qué hacer.
+function accionLanding(fn,boton){
+ try{fn()}
+ catch(e){
+  console.error("RaizNorte:",e);
+  const ancla=boton.closest(".landctas")||boton;
+  let aviso=$("landingError");
+  if(!aviso){
+   aviso=document.createElement("p");
+   aviso.id="landingError";
+   aviso.className="msg bad";
+   aviso.style.marginTop="12px";
+   ancla.parentNode.insertBefore(aviso,ancla.nextSibling);
+  }
+  aviso.textContent=`No se pudo abrir: ${e.message}. Recarga con Ctrl+Shift+R; si continúa, prueba una ventana de incógnito.`;
+ }
+}
+$("landingStart").onclick=e=>accionLanding(goStart,e.currentTarget);
+$("landingStart2").onclick=e=>accionLanding(goStart,e.currentTarget);
+$("landingNavCTA").onclick=e=>accionLanding(goStart,e.currentTarget);
+$("landingDemo").onclick=e=>accionLanding(goDemo,e.currentTarget);
+$("landingDemo2").onclick=e=>accionLanding(goDemo,e.currentTarget);
 
 /* marquesina de valores en la landing */
 (function(){
