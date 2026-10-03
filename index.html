@@ -1498,7 +1498,19 @@ const CULTIVOS={
  maiz:{label:"Maíz",disponible:false},
 };
 const MUNI_LABEL={cuautla:"Cuautla",ayala:"Ayala",yautepec:"Yautepec",otro_mor:"Otro municipio de Morelos",fuera:"Fuera de Morelos"};
-function loadAcc(){try{const d=JSON.parse(localStorage.getItem("jitomateAccounts"));return d&&d.accounts?d:{accounts:[],sessionId:null}}catch(e){return {accounts:[],sessionId:null}}}
+function loadAcc(){
+ try{
+  const d=JSON.parse(localStorage.getItem("jitomateAccounts"));
+  if(!d||!Array.isArray(d.accounts))return {accounts:[],sessionId:null};
+  // El modelo de cuenta cambió durante el desarrollo (antes se guardaba nombre
+  // y NIP, ahora correo y contraseña). Las cuentas viejas no tienen correo y
+  // rompían la búsqueda por correo, dejando los botones muertos. Se descartan
+  // al cargar, junto con una sesión que apunte a una cuenta inexistente.
+  const accounts=d.accounts.filter(a=>a&&typeof a.email==="string"&&Array.isArray(a.lotes));
+  const sessionId=accounts.some(a=>a.id===d.sessionId)?d.sessionId:null;
+  return {accounts,sessionId};
+ }catch(e){return {accounts:[],sessionId:null}}
+}
 function saveAcc(d){try{localStorage.setItem("jitomateAccounts",JSON.stringify(d))}catch(e){}}
 let ACC=loadAcc();
 let CURRENT_LOTE=null,editingLoteId=null,homeTab="dash";
@@ -1506,7 +1518,7 @@ function accById(id){return ACC.accounts.find(a=>a.id===id)||null}
 function currentAcc(){return accById(ACC.sessionId)}
 function accUid(){return "a"+Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
 function validEmail(s){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s)}
-function accByEmail(email){return ACC.accounts.find(a=>a.email.toLowerCase()===email.toLowerCase())||null}
+function accByEmail(email){const q=String(email||"").toLowerCase();return ACC.accounts.find(a=>typeof a.email==="string"&&a.email.toLowerCase()===q)||null}
 
 $("loginSubmit").onclick=()=>{
  const email=$("loginEmail").value.trim(),pass=$("loginPassword").value;
