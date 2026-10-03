@@ -190,6 +190,18 @@ td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
 .params{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin-top:12px}
 .fieldbox{border:2px solid var(--line);border-radius:14px;padding:12px;margin-top:14px;background:var(--field)}
 .fieldbox h3{font-size:18px;margin-bottom:4px}.fieldbox .form{margin-top:8px}
+.trapphoto{margin:12px 0}
+.trapphoto-empty{display:flex;flex-wrap:wrap;gap:10px}
+.trapphoto-empty label.btn{cursor:pointer}
+.trapphoto-preview{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-start}
+.trapphoto-preview img{width:140px;height:140px;object-fit:cover;border-radius:12px;border:2px solid var(--line);background:var(--surface)}
+.trapphoto-actions{display:flex;flex-direction:column;gap:8px;align-self:center}
+#trapPhotoMsg:empty{display:none}
+.cammodal{position:fixed;inset:0;background:rgba(10,12,8,.72);display:flex;align-items:center;justify-content:center;padding:16px;z-index:50}
+.cammodal-box{background:var(--surface);border-radius:18px;padding:16px;width:100%;max-width:480px;box-shadow:var(--shadow)}
+.cammodal-box video{width:100%;max-height:60vh;border-radius:12px;background:#000;display:block}
+.cammodal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:14px}
+.cammodal-actions .btn{flex:1}
 .metric{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}.metric div{background:var(--field);border:1px solid var(--line);border-radius:12px;padding:10px}.metric b{display:block;font-size:24px}
 .tag{font-size:13px;font-weight:700;padding:1px 8px;border-radius:6px}
 .tag.s{background:var(--warn-soft);color:var(--warn)}.tag.p{background:var(--bad-soft);color:var(--bad)}.tag.v{background:var(--leaf-soft);color:var(--ok)}
@@ -324,6 +336,8 @@ td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2.5M12 19.5V22M4.2 4.2l1.8 1.8M18 18l1.8 1.8M2 12h2.5M19.5 12H22M4.2 19.8L6 18M18 6l1.8-1.8"/></symbol>
  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20.5 14.7A8.5 8.5 0 1 1 9.3 3.5a6.8 6.8 0 0 0 11.2 11.2z"/></symbol>
  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c1.4-4.2 4.4-6.5 8-6.5s6.6 2.3 8 6.5"/></symbol>
+ <symbol id="i-camera" viewBox="0 0 24 24"><path d="M4 8h3l1.6-2.4A2 2 0 0 1 10.3 4.6h3.4a2 2 0 0 1 1.7 1L17 8h3a1.5 1.5 0 0 1 1.5 1.5v9A1.5 1.5 0 0 1 20 20H4a1.5 1.5 0 0 1-1.5-1.5v-9A1.5 1.5 0 0 1 4 8z"/><circle cx="12" cy="13.3" r="3.6"/></symbol>
+ <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 15V4M8 8l4-4 4 4"/><path d="M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></symbol>
  <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M4 7l8 6 8-6"/></symbol>
  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></symbol>
 </svg>
@@ -808,6 +822,23 @@ td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
       <div class="fieldbox">
         <h3>Conteo de trampas del día</h3>
         <p class="msg">Dato opcional. Escribe individuos observados en la trampa del día seleccionado. No confirma una plaga por sí solo.</p>
+        <div class="trapphoto" id="trapPhotoBox">
+          <div class="trapphoto-empty" id="trapPhotoEmpty">
+            <button class="btn ghost small" id="trapCamBtn" type="button"><svg class="ic sm" aria-hidden="true"><use href="#i-camera"/></svg> Tomar foto de la trampa</button>
+            <label class="btn ghost small" id="trapUploadLbl">
+              <svg class="ic sm" aria-hidden="true"><use href="#i-upload"/></svg> Subir foto
+              <input type="file" id="trapPhotoFile" accept="image/*" hidden>
+            </label>
+          </div>
+          <div class="trapphoto-preview" id="trapPhotoPreview" hidden>
+            <img id="trapPhotoImg" alt="Foto de la trampa guardada para este día">
+            <div class="trapphoto-actions">
+              <button class="btn ghost small" id="trapPhotoAnalyze" type="button">Analizar con IA (próximamente)</button>
+              <button class="btn ghost small" id="trapPhotoRemove" type="button">Quitar foto</button>
+            </div>
+          </div>
+          <p class="msg" id="trapPhotoMsg"></p>
+        </div>
         <div class="form">
           <label class="f">Tizón: plantas con síntomas<input class="trapInput" data-trap="tiz" type="number" min="0" step="1" placeholder="0"></label>
           <label class="f">Mosquita: individuos/trampa<input class="trapInput" data-trap="mos" type="number" min="0" step="1" placeholder="0"></label>
@@ -848,6 +879,19 @@ td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
 <p class="foot">Demo de hackatón. ETo con Hargreaves–Samani, balance de agua diario en la zona de raíces y rendimiento relativo con la relación de Doorenbos y Kassam. Valores de referencia sin calibrar para Morelos.</p>
 </div>
 
+<!-- ====== MODAL: CÁMARA PARA FOTO DE TRAMPA ====== -->
+<div class="cammodal" id="camModal" hidden role="dialog" aria-modal="true" aria-label="Tomar foto de la trampa">
+  <div class="cammodal-box">
+    <video id="camVideo" autoplay playsinline muted></video>
+    <p class="msg bad" id="camMsg" role="status"></p>
+    <div class="cammodal-actions">
+      <button class="btn ghost" id="camCancel" type="button">Cancelar</button>
+      <button class="btn" id="camShoot" type="button"><svg class="ic" aria-hidden="true"><use href="#i-camera"/></svg> Capturar</button>
+    </div>
+  </div>
+</div>
+<canvas id="camCanvas" hidden></canvas>
+
 <script>
 const MS=864e5;
 const MON_TMAX=[29,31,33,34,34,31,30,30,29,29,29,28];
@@ -878,7 +922,7 @@ const PDEF=[
  ["tutaBase","Palomilla del tomate: temperatura base (°C)",1,"s","Ídem; el índice usa grados-día."],
  ["tutaRef","Palomilla del tomate: grados-día diarios del ritmo máximo",1,"s","Ídem. El índice es el avance de los últimos 14 días frente a este ritmo máximo."]];
 
-const S={mode:"prod",clima:"normal",start:"2026-10-15",system:"campo",riegoMode:"goteo",p:Object.assign({},DEF),csv:null,costo:0,day:60,log:[],clim:[],sim:{},pl:{},alerts:[],soilObs:{},traps:{},tab:"riego"};
+const S={mode:"prod",clima:"normal",start:"2026-10-15",system:"campo",riegoMode:"goteo",p:Object.assign({},DEF),csv:null,costo:0,day:60,log:[],clim:[],sim:{},pl:{},alerts:[],soilObs:{},traps:{},trapPhotos:{},tab:"riego"};
 const $=id=>document.getElementById(id);
 const nf=(n,d=0)=>Number(n).toLocaleString("es-MX",{minimumFractionDigits:d,maximumFractionDigits:d});
 const fmtD=d=>d.toLocaleDateString("es-MX",{day:"numeric",month:"short"});
@@ -1118,11 +1162,60 @@ function renderPlagasT(){
 function renderTrapInputs(){
  const day=S.traps[S.day]||{};
  document.querySelectorAll(".trapInput").forEach(e=>e.value=day[e.dataset.trap]==null?"":day[e.dataset.trap]);
+ renderTrapPhoto();
  const rows=Object.keys(S.traps).flatMap(i=>Object.keys(S.traps[i]).map(k=>({i:+i,k,count:S.traps[i][k]})));
  if(!rows.length){$("trapMetrics").innerHTML=`<p class="msg">Aún no hay conteos guardados. La precisión y cobertura aparecerán aquí.</p>`;return}
  const metrics=["tiz","mos","tuta"].map(k=>{const vals=rows.filter(x=>x.k===k),tp=vals.filter(x=>x.count>0&&S.pl[k][x.i]>=S.p.altoT).length,fp=vals.filter(x=>x.count===0&&S.pl[k][x.i]>=S.p.altoT).length,fn=vals.filter(x=>x.count>0&&S.pl[k][x.i]<S.p.altoT).length;return `<div><b>${PNAMES[k]}</b>Precisión ${tp+fp?nf(tp/(tp+fp)*100):"—"}%<br>Cobertura ${tp+fn?nf(tp/(tp+fn)*100):"—"}%</div>`});
  $("trapMetrics").innerHTML=`<div class="metric">${metrics.join("")}</div><p class="msg">Cálculo exploratorio sobre los conteos capturados: positivo = conteo mayor que 0 y alerta = índice mayor o igual a ${nf(S.p.altoT)}. No es validación científica.</p>`;
 }
+function renderTrapPhoto(){
+ const url=S.trapPhotos[S.day];
+ $("trapPhotoEmpty").hidden=!!url;
+ $("trapPhotoPreview").hidden=!url;
+ if(url)$("trapPhotoImg").src=url;
+ $("trapPhotoMsg").textContent="";
+}
+let camStream=null;
+function openCamera(){
+ $("camMsg").textContent="";
+ $("camModal").hidden=false;
+ navigator.mediaDevices.getUserMedia({video:{facingMode:"environment"},audio:false}).then(stream=>{
+  camStream=stream;
+  $("camVideo").srcObject=stream;
+ }).catch(()=>{
+  $("camMsg").textContent='No se pudo abrir la cámara. Revisa los permisos del navegador o usa "Subir foto".';
+ });
+}
+function closeCamera(){
+ if(camStream){camStream.getTracks().forEach(t=>t.stop());camStream=null}
+ $("camVideo").srcObject=null;
+ $("camModal").hidden=true;
+}
+$("trapCamBtn").onclick=openCamera;
+$("camCancel").onclick=closeCamera;
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("camModal").hidden)closeCamera()});
+$("camShoot").onclick=()=>{
+ const v=$("camVideo");
+ if(!v.videoWidth){$("camMsg").textContent="La cámara todavía no está lista, espera un segundo.";return}
+ const c=$("camCanvas");
+ c.width=v.videoWidth;c.height=v.videoHeight;
+ c.getContext("2d").drawImage(v,0,0);
+ S.trapPhotos[S.day]=c.toDataURL("image/jpeg",0.85);
+ closeCamera();
+ renderTrapPhoto();
+};
+$("trapPhotoFile").onchange=e=>{
+ const f=e.target.files&&e.target.files[0];
+ if(!f)return;
+ const reader=new FileReader();
+ reader.onload=()=>{S.trapPhotos[S.day]=reader.result;renderTrapPhoto()};
+ reader.readAsDataURL(f);
+ e.target.value="";
+};
+$("trapPhotoRemove").onclick=()=>{delete S.trapPhotos[S.day];renderTrapPhoto()};
+$("trapPhotoAnalyze").onclick=()=>{
+ $("trapPhotoMsg").textContent="La detección automática todavía no está conectada a un proveedor de visión. Por ahora, registra el conteo a mano abajo.";
+};
 function renderRecoT(){
  const d=recoData(),P=S.p,c=d.c,e=logEntry(d.i),cl={ok:"ok",bajo:"ok",medio:"warn",alto:"bad"};
  const riego=d.irr>0?`Regar hoy: lámina neta de <b>${nf(d.irr,1)} mm</b>, unos <b>${nf(d.irr/d.Ea*10)} m³/ha</b> bombeados con eficiencia de ${nf(P.Ea)}%.`:`No regar hoy. Agotamiento de ${nf(d.dr,1)} mm; límite sin estrés de ${nf(d.RAW*P.trigger,1)} mm. Próximo riego en unos <b>${d.dias} ${d.dias===1?"día":"días"}</b>.`;
@@ -1486,7 +1579,7 @@ function enterLote(id){
  CURRENT_LOTE=l;
  S.start=l.fechaSiembra;S.system=l.sistema;
  S.p.TAW=SUELOS[l.suelo]||S.p.TAW;S.p.Ea=RIEGOS[l.riego]||S.p.Ea;
- S.log=[];S.traps={};S.soilObs={};S.day=60;
+ S.log=[];S.traps={};S.trapPhotos={};S.soilObs={};S.day=60;
  setScreen("app");
  render();
 }
