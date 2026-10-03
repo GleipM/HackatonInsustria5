@@ -11,7 +11,8 @@
 --bg:#f6f4ea;--surface:#ffffff;--ink:#33392f;--muted:#6f7760;--line:#ddd7c4;--field:#f1efe3;
 --water:#3f7486;--on-water:#ffffff;--water-soft:#e3edf0;--leaf:#5e8f5b;--leaf-soft:#e7efe0;--warn:#96682b;--warn-soft:#f5ead2;--bad:#ad5c4d;--bad-soft:#f5e2dc;--ok:#5e8f5b;
 --c-cal:#c98a4b;--c-bal:#3f7486;--c-def:#8a6fa0;--p-tiz:#a05a78;--p-mos:#ab8f3a;--p-tuta:#4a8f7a;
---band-ok:#5e8f5b1a;--band-warn:#96682b22;--band-bad:#ad5c4d22;--shadow:0 1px 2px #33392f14,0 4px 14px #33392f10}
+--band-ok:#5e8f5b1a;--band-warn:#96682b22;--band-bad:#ad5c4d22;--shadow:0 1px 2px #33392f14,0 4px 14px #33392f10;
+--cta-grad-a:#2f5e45;--cta-grad-b:#1f4a5c}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1c2018;--surface:#262b20;--ink:#ece7d9;--muted:#b4af9c;--line:#3a4030;--field:#20241b;
 --water:#7fa8bd;--on-water:#10181c;--water-soft:#1d2d33;--leaf:#8fbf86;--leaf-soft:#253325;--warn:#e0b868;--warn-soft:#3a2f16;--bad:#d98f82;--bad-soft:#3a2420;--ok:#8fbf86;
 --c-cal:#d9a564;--c-bal:#7fa8bd;--c-def:#b49bc7;--p-tiz:#c98aa5;--p-mos:#d4bc6e;--p-tuta:#7fbfab;
@@ -209,6 +210,52 @@ td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
 .croprow{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
 .cropchip{display:inline-flex;align-items:center;gap:7px;border-radius:999px;padding:7px 15px;font-size:14.5px;font-weight:700;border:1.5px solid var(--line);background:var(--field);color:var(--muted)}
 .cropchip.active{border-color:var(--leaf);background:var(--leaf-soft);color:var(--leaf)}
+.hl{color:var(--leaf)}
+.landnav-cta{margin-left:4px}
+/* vista previa del producto en el hero */
+.heropreview{max-width:300px;margin:30px auto 0;text-align:left}
+.heropreview-tag{font-size:12px;font-weight:700;color:var(--muted);text-align:center;margin-bottom:10px;letter-spacing:.05em;text-transform:uppercase}
+.heropreview-card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:var(--shadow)}
+/* marquesina de valores */
+.marquee{overflow:hidden;background:var(--surface);border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:13px 0}
+.marquee-track{display:flex;width:max-content;animation:marquee 26s linear infinite}
+.marquee-track span{font-weight:700;color:var(--leaf);font-size:14.5px;padding:0 26px;white-space:nowrap;position:relative}
+.marquee-track span::after{content:"•";position:absolute;right:0;color:var(--line)}
+@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@media (prefers-reduced-motion:reduce){.marquee-track{animation:none}}
+/* para quien es */
+.audgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.audcard{background:var(--surface);border:2px solid var(--line);border-radius:18px;padding:22px}
+.audcard.tec{border-color:var(--water)}
+.audcard.prod{border-color:var(--leaf)}
+.audtag{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;padding:4px 12px;border-radius:999px;margin-bottom:10px}
+.audcard.tec .audtag{background:var(--water-soft);color:var(--water)}
+.audcard.prod .audtag{background:var(--leaf-soft);color:var(--leaf)}
+.audcard h3{font-size:19px}
+.audcard ul{margin:10px 0 0;padding-left:20px}
+.audcard li{margin-bottom:7px;font-size:15.5px}
+/* como funciona */
+.stepsrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:18px}
+.stepcard{text-align:center}
+.stepnum{width:34px;height:34px;border-radius:50%;background:var(--leaf);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;margin:0 auto 10px;font-size:15px}
+.stepcard h4{font-size:16px;margin-bottom:4px}
+.stepcard .sub{font-size:14.5px}
+/* franja de cierre */
+.closecta{background:linear-gradient(120deg,var(--cta-grad-a) 0%,var(--cta-grad-b) 100%);color:#fff;border-radius:24px;padding:36px 22px;text-align:center}
+.closecta .eyebrow{font-size:12.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;opacity:.85}
+.closecta h2{font-size:25px;margin-top:8px;color:#fff}
+.closecta p{opacity:.92;margin-top:8px;color:#fff}
+.closecta .landctas{margin-top:18px}
+.closecta .btn{background:#fff;color:var(--cta-grad-a);border-color:#fff}
+.closecta .btn.ghost{background:transparent;color:#fff;border-color:rgba(255,255,255,.55)}
+@media (min-width:640px){.closecta{padding:46px 40px}.closecta h2{font-size:30px}}
+/* pie de pagina */
+.landfoot{margin-top:28px;padding-top:24px;border-top:1px solid var(--line)}
+.landfoot-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:22px}
+.landfoot h5{font-size:12.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:10px}
+.landfoot a{display:block;color:var(--ink);text-decoration:none;font-size:15px;margin-bottom:8px;font-weight:700}
+.landfoot a:hover{color:var(--leaf)}
+.landfoot-bottom{margin-top:18px;padding-top:16px;border-top:1px solid var(--line);font-size:13px;color:var(--muted);display:flex;flex-wrap:wrap;gap:8px 16px;justify-content:space-between}
 @media (min-width:640px){.landhero-content h1{font-size:42px}.landhero .wrap{padding-top:22px;padding-bottom:46px}.landhero-content{margin-top:40px}}
 </style>
 </head>
@@ -237,14 +284,17 @@ td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
     <div class="wrap">
       <div class="topbar">
         <div class="brand"><svg class="ic" aria-hidden="true"><use href="#i-leaf"/></svg><span>Mi lote de jitomate</span></div>
-        <button id="themeToggle3" class="btn ghost iconbtn" type="button" aria-label="Cambiar a modo oscuro">
-          <svg class="ic" aria-hidden="true"><use href="#i-moon" id="themeIconUse3"/></svg>
-        </button>
+        <div class="topctrls">
+          <button id="themeToggle3" class="btn ghost iconbtn" type="button" aria-label="Cambiar a modo oscuro">
+            <svg class="ic" aria-hidden="true"><use href="#i-moon" id="themeIconUse3"/></svg>
+          </button>
+          <button class="btn landnav-cta" id="landingNavCTA" type="button">Comenzar →</button>
+        </div>
       </div>
       <div class="landhero-content">
         <span class="landbadge"><svg class="ic" aria-hidden="true"><use href="#i-leaf"/></svg>Valle Cuautla–Ayala–Yautepec, Morelos</span>
-        <h1>Riego y plagas, sin adivinar</h1>
-        <p class="sub">Simulador de riego y monitoreo de plagas para jitomate, con cada recomendación pendiente de validar por un técnico — y arquitectura lista para crecer a más cultivos de exportación de Morelos.</p>
+        <h1>Riego y plagas, <span class="hl">sin adivinar</span></h1>
+        <p class="sub">Simulador de riego y monitoreo de plagas para jitomate, con cada recomendación pendiente de validar por un técnico — para técnicos que buscan una herramienta para sus clientes, y para productores que quieren decidir con datos.</p>
         <div class="landctas">
           <button class="btn" id="landingStart" type="button">Ver mis lotes</button>
           <button class="btn ghost" id="landingDemo" type="button">Ver demo con datos de ejemplo</button>
@@ -255,11 +305,63 @@ td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
           <span><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>3 índices de plagas</span>
           <span><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Validación técnica obligatoria</span>
         </div>
+        <div class="heropreview">
+          <div class="heropreview-tag">Así se ve en el celular</div>
+          <div class="heropreview-card">
+            <div class="sign" style="padding:14px;border-radius:12px">
+              <svg class="ic" aria-hidden="true"><use href="#i-drop"/></svg>
+              <div><div class="kick" style="font-size:12.5px">Hoy en tu lote</div><h2 style="font-size:19px">Sí, hoy toca regar</h2></div>
+            </div>
+            <div class="amount" style="margin:12px 0 0"><span class="num" style="font-size:34px">6</span><span class="unit" style="font-size:14px">litros por m²</span></div>
+            <div class="gtitle" style="margin:12px 0 5px;font-size:14px"><span>Agua en el suelo</span><span>58%</span></div>
+            <div class="gbar" style="height:18px;border-radius:9px"><i class="r" style="width:40%"></i><i class="a" style="width:15%"></i><i class="g" style="width:45%"></i></div>
+            <span class="status pend" style="margin-top:10px;font-size:13.5px"><svg class="ic sm" aria-hidden="true"><use href="#i-clock"/></svg>Falta que tu técnico la confirme</span>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee-track" id="landMarquee"></div>
+  </div>
+
   <div class="wrap">
+    <h2 id="paraquien-anchor" style="font-size:24px;text-align:center;margin:36px 0 4px">¿Para quién es?</h2>
+    <p class="sub" style="text-align:center;max-width:520px;margin:0 auto 18px">La misma herramienta, dos formas de usarla.</p>
+    <div class="audgrid">
+      <div class="audcard tec">
+        <span class="audtag"><svg class="ic sm" aria-hidden="true"><use href="#i-eye"/></svg>Para técnicos agrónomos</span>
+        <h3>Una herramienta para tus clientes</h3>
+        <p class="sub">Da seguimiento a cada lote con el detalle completo, y deja todo validado antes de que le llegue al productor.</p>
+        <ul class="sub">
+          <li>Compara calendario, balance hídrico, riego deficitario y goteo</li>
+          <li>Ajusta coeficientes de cultivo, suelo y umbrales de plagas</li>
+          <li>Registra conteos de trampas y mide precisión de las alertas</li>
+          <li>Valida o rechaza la recomendación antes de que se siga</li>
+        </ul>
+      </div>
+      <div class="audcard prod">
+        <span class="audtag"><svg class="ic sm" aria-hidden="true"><use href="#i-leaf"/></svg>Para productores</span>
+        <h3>Una respuesta directa, cada día</h3>
+        <p class="sub">Sin tecnicismos: abres tu lote y sabes qué hacer hoy, con letra grande y lenguaje sencillo.</p>
+        <ul class="sub">
+          <li>"Hoy toca regar" o "hoy no riegues", sin adivinar</li>
+          <li>Cuánta agua aplicar, en litros por m² o en pipas</li>
+          <li>Avisos de plagas sin recetar ningún producto</li>
+          <li>Anota lo que de verdad regaste, para tu técnico</li>
+        </ul>
+      </div>
+    </div>
+
+    <h2 id="comofunciona-anchor" style="font-size:24px;text-align:center;margin:40px 0 20px">Cómo funciona</h2>
+    <div class="stepsrow">
+      <div class="stepcard"><div class="stepnum">1</div><h4>Registra tu lote</h4><p class="sub">Nombre, cultivo, hectáreas, suelo y cómo riegas.</p></div>
+      <div class="stepcard"><div class="stepnum">2</div><h4>Revisa el resumen</h4><p class="sub">El dashboard ordena qué lote necesita agua o tiene riesgo de plagas hoy.</p></div>
+      <div class="stepcard"><div class="stepnum">3</div><h4>Tu técnico valida</h4><p class="sub">Ninguna recomendación es definitiva sin su revisión.</p></div>
+    </div>
+
+    <h2 style="font-size:24px;text-align:center;margin:40px 0 20px">Lo que resuelve</h2>
     <div class="featuregrid">
       <div class="ftile"><div class="icwrap water"><svg class="ic" aria-hidden="true"><use href="#i-drop"/></svg></div><h3>Sabes si hoy toca regar</h3><p class="sub">Y cuánta agua, en litros por m² o en pipas, comparado contra tu calendario de siempre.</p></div>
       <div class="ftile"><div class="icwrap bad"><svg class="ic" aria-hidden="true"><use href="#i-bug"/></svg></div><h3>Vigilas plagas sin adivinar</h3><p class="sub">Avisos de monitoreo para tizón tardío, mosquita blanca y palomilla del tomate; nunca receta un producto.</p></div>
@@ -272,7 +374,40 @@ td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
       <div class="croprow" id="landCropRow"></div>
     </div>
 
-    <div class="note" style="margin-top:18px"><svg class="ic" aria-hidden="true"><use href="#i-info"/></svg><p><b>Demostración con datos de ejemplo.</b> No necesita servidor: corre entera en tu navegador.</p></div>
+    <div class="closecta" style="margin-top:36px">
+      <div class="eyebrow">Pruébalo ahora</div>
+      <h2>Decide con datos, <span class="hl">no a ciegas</span></h2>
+      <p>Sin servidor, sin instalar nada: abre el archivo y entra con tu correo.</p>
+      <div class="landctas">
+        <button class="btn" id="landingStart2" type="button">Ver mis lotes</button>
+        <button class="btn ghost" id="landingDemo2" type="button">Ver demo con datos de ejemplo</button>
+      </div>
+    </div>
+
+    <div class="note" style="margin-top:28px"><svg class="ic" aria-hidden="true"><use href="#i-info"/></svg><p><b>Demostración con datos de ejemplo.</b> No necesita servidor: corre entera en tu navegador.</p></div>
+
+    <div class="landfoot">
+      <div class="landfoot-grid">
+        <div>
+          <div class="brand" style="font-size:18px;margin-bottom:8px"><svg class="ic" aria-hidden="true"><use href="#i-leaf"/></svg><span>Mi lote de jitomate</span></div>
+          <p class="sub">Riego y plagas para jitomate del valle Cuautla–Ayala–Yautepec, Morelos, con validación técnica obligatoria.</p>
+        </div>
+        <div>
+          <h5>Producto</h5>
+          <a href="#comofunciona-anchor" id="footHow">Cómo funciona</a>
+          <a href="#paraquien-anchor" id="footWho">Para quién es</a>
+          <a href="manual-usuario.pdf" target="_blank" rel="noopener">Manual de usuario (PDF)</a>
+        </div>
+        <div>
+          <h5>Hackatón Industria 5.0</h5>
+          <p class="sub">Prototipo de demostración. El clima, algunos conteos y la humedad pueden ser datos de ejemplo.</p>
+        </div>
+      </div>
+      <div class="landfoot-bottom">
+        <span>© 2026 Mi lote de jitomate — demo de hackatón.</span>
+        <span>Hecho para el valle Cuautla–Ayala–Yautepec, Morelos.</span>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -1030,10 +1165,13 @@ function setScreen(which){
  $("homeWrap").hidden=which!=="home";
  $("wrap").hidden=which!=="app";
 }
-$("landingStart").onclick=()=>{
+function goStart(){
  if(currentAcc()){setScreen("home");homeTab="dash";renderHome()}
  else{showAuth()}
-};
+}
+$("landingStart").onclick=goStart;
+$("landingStart2").onclick=goStart;
+$("landingNavCTA").onclick=goStart;
 
 /* ---- cuenta de demostración con lotes precargados ---- */
 const DEMO_EMAIL="demo@mivalle.mx",DEMO_PASS="demo1234";
@@ -1045,13 +1183,22 @@ function demoLotes(){
   {id:accUid(),nombre:"Lote Santa Rosa",cultivo:"jitomate",municipio:"yautepec",hectareas:4,sistema:"campo",suelo:"arenoso",riego:"surco",fechaSiembra:isoDaysAgo(95),notas:"Lote de ejemplo para la demostración."},
  ];
 }
-$("landingDemo").onclick=()=>{
+function goDemo(){
  let acc=accByEmail(DEMO_EMAIL);
  if(acc){acc.password=DEMO_PASS;acc.lotes=demoLotes()}
  else{acc={id:accUid(),email:DEMO_EMAIL,password:DEMO_PASS,lotes:demoLotes(),creado:new Date().toISOString().slice(0,10)};ACC.accounts.push(acc)}
  ACC.sessionId=acc.id;saveAcc(ACC);
  enterApp();
-};
+}
+$("landingDemo").onclick=goDemo;
+$("landingDemo2").onclick=goDemo;
+
+/* marquesina de valores en la landing */
+(function(){
+ const items=["Riego a tiempo","Plagas bajo control","Validado por tu técnico","Ahorra agua","Decide con datos","Sin servidor, sin vueltas"];
+ const html=items.map(t=>`<span>${esc(t)}</span>`).join("");
+ $("landMarquee").innerHTML=html+html;
+})();
 function showAuth(){
  setScreen("auth");
  $("loginEmail").value="";$("loginPassword").value="";$("loginMsg").textContent="";
