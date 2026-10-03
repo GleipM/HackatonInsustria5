@@ -1302,8 +1302,7 @@ const AI_SCHEMA={type:"OBJECT",properties:{
  confianza:{type:"STRING",enum:["baja","media","alta"]},
  nota:{type:"STRING"}},
  required:["es_foto_de_trampa","mosquita_blanca","palomilla_tomate","otros_insectos","confianza","nota"]};
-async function analyzeTrapPhoto(url,key){
- const small=await shrinkPhoto(url),[head,data]=small.split(",");
+async function analyzeTrapPhotoOnce(head,data,key){
  let res;
  try{
   res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${AI_MODEL}:generateContent`,{
@@ -1319,6 +1318,7 @@ async function analyzeTrapPhoto(url,key){
   if(res.status===400&&/api key/i.test(detail))throw new Error("La clave no es válida. Revísala en «Clave de la IA de visión».");
   if(res.status===401||res.status===403)throw new Error("Google rechazó la clave (sin permiso para la API de Gemini). Revísala en «Clave de la IA de visión».");
   if(res.status===429)throw new Error("Se acabó la cuota de tu clave por ahora. Espera un momento o revisa tu plan en Google AI Studio.");
+  if(res.status===503||res.status===500){const e=new Error("Gemini está saturado en este momento (servidor ocupado).");e.retriable=true;throw e}
   throw new Error(`Gemini respondió con un error (${res.status})${detail?": "+detail:""}.`);
  }
  if(body&&body.promptFeedback&&body.promptFeedback.blockReason)throw new Error("Gemini bloqueó el análisis de esta foto. Registra el conteo a mano.");
@@ -1327,6 +1327,22 @@ async function analyzeTrapPhoto(url,key){
  let r;try{r=JSON.parse(text)}catch(e){throw new Error("La respuesta de Gemini no se pudo leer. Intenta de nuevo.")}
  const n=v=>Number.isInteger(v)&&v>=0?v:null;
  return {trampa:r.es_foto_de_trampa===true,mos:n(r.mosquita_blanca),tuta:n(r.palomilla_tomate),otros:r.otros_insectos===true,conf:["baja","media","alta"].includes(r.confianza)?r.confianza:"baja",nota:typeof r.nota==="string"?r.nota.trim():""};
+}
+async function analyzeTrapPhoto(url,key,onRetry){
+ const small=await shrinkPhoto(url),[head,data]=small.split(",");
+ const MAXTRIES=3,DELAYS=[1500,3000];
+ for(let attempt=1;attempt<=MAXTRIES;attempt++){
+  try{return await analyzeTrapPhotoOnce(head,data,key)}
+  catch(e){
+   if(e.retriable&&attempt<MAXTRIES){
+    if(onRetry)onRetry(attempt+1,MAXTRIES);
+    await new Promise(r=>setTimeout(r,DELAYS[attempt-1]));
+    continue;
+   }
+   if(e.retriable)e.message+=` Lo intenté ${MAXTRIES} veces; prueba de nuevo en un momento.`;
+   throw e;
+  }
+ }
 }
 $("trapPhotoAnalyze").onclick=async()=>{
  const day=S.day,url=S.trapPhotos[day],key=readAiKey(),btn=$("trapPhotoAnalyze");
@@ -1338,7 +1354,7 @@ $("trapPhotoAnalyze").onclick=async()=>{
  btn.disabled=true;btn.textContent="Analizando…";
  setTrapMsg("Enviando la foto a Gemini…");
  let out,err;
- try{out=await analyzeTrapPhoto(url,key)}catch(e){err=e}
+ try{out=await analyzeTrapPhoto(url,key,(n,max)=>{if(S.day===day&&S.trapPhotos[day]===url)setTrapMsg(`Gemini está saturado, reintentando (${n} de ${max})…`)})}catch(e){err=e}
  btn.disabled=false;btn.textContent="Analizar con IA";
  if(S.day!==day||S.trapPhotos[day]!==url)return; // cambió el día o la foto mientras esperábamos
  if(err){setTrapMsg(err.message,"bad");return}
