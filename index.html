@@ -220,6 +220,7 @@ td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
 .tag{font-size:13px;font-weight:700;padding:1px 8px;border-radius:6px}
 .tag.s{background:var(--warn-soft);color:var(--warn)}.tag.p{background:var(--bad-soft);color:var(--bad)}.tag.v{background:var(--leaf-soft);color:var(--ok)}
 .reco{border:3px solid var(--warn);border-radius:14px;padding:16px;margin-top:6px}
+.confirmado{background:var(--leaf-soft);border-left:4px solid var(--leaf);border-radius:10px;padding:10px 12px;margin:8px 0}
 .reco .head{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-bottom:8px}
 .reco ul{margin:8px 0 0;padding-left:20px}
 .actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
@@ -1372,15 +1373,23 @@ $("trapPhotoAnalyze").onclick=async()=>{
 };
 function renderRecoT(){
  const d=recoData(),P=S.p,c=d.c,e=logEntry(d.i),cl={ok:"ok",bajo:"ok",medio:"warn",alto:"bad"};
- const riego=d.irr>0?`Regar hoy: lámina neta de <b>${nf(d.irr,1)} mm</b>, unos <b>${nf(d.irr/d.Ea*10)} m³/ha</b> bombeados con eficiencia de ${nf(P.Ea)}%.`:`No regar hoy. Agotamiento de ${nf(d.dr,1)} mm; límite sin estrés de ${nf(d.RAW*P.trigger,1)} mm. Próximo riego en unos <b>${d.dias} ${d.dias===1?"día":"días"}</b>.`;
+ // Se atribuye explícitamente al modelo: antes decía "No regar hoy" como si
+ // fuera la decisión final, y se contradecía con el ajuste que el técnico
+ // hubiera confirmado más abajo.
+ const riego=d.irr>0?`Cálculo del modelo: <b>regar ${nf(d.irr,1)} mm</b>, unos <b>${nf(d.irr/d.Ea*10)} m³/ha</b> bombeados con eficiencia de ${nf(P.Ea)}%.`:`Cálculo del modelo: <b>no regar hoy</b>. Agotamiento de ${nf(d.dr,1)} mm; límite sin estrés de ${nf(d.RAW*P.trigger,1)} mm. Próximo riego en unos <b>${d.dias} ${d.dias===1?"día":"días"}</b>.`;
  const est=e?e.estado:"Pendiente";
  const ajusteVal=Math.max(0,Math.round(e&&e.ajuste!=null?e.ajuste:d.irr));
  const huboAjuste=e&&e.estado==="Validada"&&e.ajuste!=null&&Math.round(e.ajuste)!==Math.round(d.irr);
+ // La decisión que de verdad opera es la que confirmó el técnico, no la del
+ // modelo: se muestra tal como la va a ver el productor.
+ const confirmado=(e&&e.estado==="Validada"&&e.ajuste!=null)
+  ?`<p class="confirmado">${e.ajuste>0?`Tu productor ve: <b>regar ${nf(e.ajuste)} litros por m²</b>`:`Tu productor ve: <b>no regar hoy</b>`}${huboAjuste?`, en vez de los ${nf(d.irr,1)} del modelo`:``}.</p>`
+  :"";
  $("reco").innerHTML=`<div class="reco"><div class="head"><h3 style="font-size:20px">${esc(cap(fmtDL(c.date)))}, día ${d.i+1} (${STAGE_T[stageIdx(d.i,P)]})</h3><span class="cl ${est==="Validada"?"ok":(est==="Rechazada"?"bad":"warn")}">${est==="Pendiente"?"Pendiente de validación":est+" por el técnico"}</span></div>
-  <p style="margin-bottom:6px">${riego}</p>
+  <p style="margin-bottom:6px">${riego}</p>${confirmado}
   <p>${d.hi.length?`Riesgo <b>alto</b> de ${d.hi.map(x=>PNAMES[x.k].toLowerCase()).join(" y ")}: monitorear trampas u hojas en las próximas 48 horas.`:(d.items[0].c==="medio"?`Riesgo medio de ${PNAMES[d.items[0].k].toLowerCase()}: mantener el muestreo habitual.`:"Riesgo bajo en los tres índices: sin alerta.")}</p>
   <ul><li>Demanda del cultivo: ${nf(c.etc,1)} mm (ETo ${nf(c.eto,1)} mm × Kc ${nf(c.kc,2)}).</li><li>Temperatura ${nf(c.tmin,1)} a ${nf(c.tmax,1)} °C, lluvia ${nf(c.rain,1)} mm${S.system==="inv"?" (invernadero: no entra al cultivo)":""}.</li>
-  <li>Índices: ${d.items.map(x=>`${PNAMES[x.k]} ${nf(x.v)} <span class="cl ${cl[x.c]}">${x.c}</span>`).join(", ")}.</li>${huboAjuste?`<li>Confirmaste un ajuste: <b>${nf(e.ajuste)} litros por m²</b> en vez de los ${nf(d.irr,1)} que calculó el modelo.</li>`:""}${e&&e.aplicado!=null?`<li>El productor anotó ${nf(e.aplicado)} litros por m² aplicados.</li>`:""}</ul>
+  <li>Índices: ${d.items.map(x=>`${PNAMES[x.k]} ${nf(x.v)} <span class="cl ${cl[x.c]}">${x.c}</span>`).join(", ")}.</li>${e&&e.aplicado!=null?`<li>El productor anotó ${nf(e.aplicado)} litros por m² aplicados.</li>`:""}</ul>
   <p class="msg" style="margin-top:10px">Nunca se recomienda un agroquímico: una alerta solo dice que hay que monitorear.</p>
   <div class="fieldbox" style="margin-top:12px">
    <label class="f full">Litros por m² que confirmas al productor<input id="recoAjuste" type="number" min="0" step="1" value="${ajusteVal}"></label>
