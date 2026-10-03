@@ -188,7 +188,9 @@ td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
 }
 /* landing */
 .landhero{background:linear-gradient(180deg,var(--leaf-soft) 0%,var(--bg) 100%)}
-.landhero .wrap{padding-top:14px;padding-bottom:28px}
+.landhero-nav{padding-top:14px;padding-bottom:14px}
+.landhero-main{padding-top:4px;padding-bottom:28px}
+.landnav{display:none}
 .landhero-content{max-width:620px;margin:30px auto 0;text-align:center}
 .landbadge{display:inline-flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:6px 16px;font-size:14px;font-weight:700;color:var(--leaf);box-shadow:var(--shadow)}
 .landbadge .ic{width:16px;height:16px}
@@ -212,6 +214,9 @@ td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
 .cropchip.active{border-color:var(--leaf);background:var(--leaf-soft);color:var(--leaf)}
 .hl{color:var(--leaf)}
 .landnav-cta{margin-left:4px}
+.landnav a{color:var(--ink);text-decoration:none;font-weight:700;font-size:15px;margin-right:24px}
+.landnav a:hover{color:var(--leaf)}
+@media (min-width:860px){.landnav{display:block;margin-left:32px}}
 /* vista previa del producto en el hero */
 .heropreview{max-width:300px;margin:30px auto 0;text-align:left}
 .heropreview-tag{font-size:12px;font-weight:700;color:var(--muted);text-align:center;margin-bottom:10px;letter-spacing:.05em;text-transform:uppercase}
@@ -256,7 +261,11 @@ td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
 .landfoot a{display:block;color:var(--ink);text-decoration:none;font-size:15px;margin-bottom:8px;font-weight:700}
 .landfoot a:hover{color:var(--leaf)}
 .landfoot-bottom{margin-top:18px;padding-top:16px;border-top:1px solid var(--line);font-size:13px;color:var(--muted);display:flex;flex-wrap:wrap;gap:8px 16px;justify-content:space-between}
-@media (min-width:640px){.landhero-content h1{font-size:42px}.landhero .wrap{padding-top:22px;padding-bottom:46px}.landhero-content{margin-top:40px}}
+@media (min-width:640px){.landhero-content h1{font-size:42px}.landhero-nav{padding-top:18px;padding-bottom:18px}.landhero-main{padding-top:6px;padding-bottom:46px}.landhero-content{margin-top:40px}}
+.landsection{margin-top:52px}
+.landsection-head{text-align:center;max-width:560px;margin:0 auto 22px}
+.landsection-head h2{font-size:24px}
+.landsection-head .sub{margin-top:6px}
 </style>
 </head>
 <body>
@@ -281,9 +290,13 @@ td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
 <!-- ====== LANDING ====== -->
 <div id="landingWrap">
   <div class="landhero">
-    <div class="wrap">
+    <div class="wrap landhero-nav">
       <div class="topbar">
         <div class="brand"><svg class="ic" aria-hidden="true"><use href="#i-leaf"/></svg><span>Mi lote de jitomate</span></div>
+        <nav class="landnav" aria-label="Secciones de la página">
+          <a href="#paraquien-anchor">Para quién es</a>
+          <a href="#comofunciona-anchor">Cómo funciona</a>
+        </nav>
         <div class="topctrls">
           <button id="themeToggle3" class="btn ghost iconbtn" type="button" aria-label="Cambiar a modo oscuro">
             <svg class="ic" aria-hidden="true"><use href="#i-moon" id="themeIconUse3"/></svg>
@@ -291,6 +304,13 @@ td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
           <button class="btn landnav-cta" id="landingNavCTA" type="button">Comenzar →</button>
         </div>
       </div>
+    </div>
+
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee-track" id="landMarquee"></div>
+    </div>
+
+    <div class="wrap landhero-main">
       <div class="landhero-content">
         <span class="landbadge"><svg class="ic" aria-hidden="true"><use href="#i-leaf"/></svg>Valle Cuautla–Ayala–Yautepec, Morelos</span>
         <h1>Riego y plagas, <span class="hl">sin adivinar</span></h1>
@@ -322,71 +342,86 @@ td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
     </div>
   </div>
 
-  <div class="marquee" aria-hidden="true">
-    <div class="marquee-track" id="landMarquee"></div>
-  </div>
-
-  <div class="wrap">
-    <h2 id="paraquien-anchor" style="font-size:24px;text-align:center;margin:36px 0 4px">¿Para quién es?</h2>
-    <p class="sub" style="text-align:center;max-width:520px;margin:0 auto 18px">La misma herramienta, dos formas de usarla.</p>
-    <div class="audgrid">
-      <div class="audcard tec">
-        <span class="audtag"><svg class="ic sm" aria-hidden="true"><use href="#i-eye"/></svg>Para técnicos agrónomos</span>
-        <h3>Una herramienta para tus clientes</h3>
-        <p class="sub">Da seguimiento a cada lote con el detalle completo, y deja todo validado antes de que le llegue al productor.</p>
-        <ul class="sub">
-          <li>Compara calendario, balance hídrico, riego deficitario y goteo</li>
-          <li>Ajusta coeficientes de cultivo, suelo y umbrales de plagas</li>
-          <li>Registra conteos de trampas y mide precisión de las alertas</li>
-          <li>Valida o rechaza la recomendación antes de que se siga</li>
-        </ul>
+  <main class="wrap">
+    <section class="landsection" id="paraquien-anchor">
+      <div class="landsection-head">
+        <h2>¿Para quién es?</h2>
+        <p class="sub">La misma herramienta, dos formas de usarla.</p>
       </div>
-      <div class="audcard prod">
-        <span class="audtag"><svg class="ic sm" aria-hidden="true"><use href="#i-leaf"/></svg>Para productores</span>
-        <h3>Una respuesta directa, cada día</h3>
-        <p class="sub">Sin tecnicismos: abres tu lote y sabes qué hacer hoy, con letra grande y lenguaje sencillo.</p>
-        <ul class="sub">
-          <li>"Hoy toca regar" o "hoy no riegues", sin adivinar</li>
-          <li>Cuánta agua aplicar, en litros por m² o en pipas</li>
-          <li>Avisos de plagas sin recetar ningún producto</li>
-          <li>Anota lo que de verdad regaste, para tu técnico</li>
-        </ul>
+      <div class="audgrid">
+        <div class="audcard tec">
+          <span class="audtag"><svg class="ic sm" aria-hidden="true"><use href="#i-eye"/></svg>Para técnicos agrónomos</span>
+          <h3>Una herramienta para tus clientes</h3>
+          <p class="sub">Da seguimiento a cada lote con el detalle completo, y deja todo validado antes de que le llegue al productor.</p>
+          <ul class="sub">
+            <li>Compara calendario, balance hídrico, riego deficitario y goteo</li>
+            <li>Ajusta coeficientes de cultivo, suelo y umbrales de plagas</li>
+            <li>Registra conteos de trampas y mide precisión de las alertas</li>
+            <li>Valida o rechaza la recomendación antes de que se siga</li>
+          </ul>
+        </div>
+        <div class="audcard prod">
+          <span class="audtag"><svg class="ic sm" aria-hidden="true"><use href="#i-leaf"/></svg>Para productores</span>
+          <h3>Una respuesta directa, cada día</h3>
+          <p class="sub">Sin tecnicismos: abres tu lote y sabes qué hacer hoy, con letra grande y lenguaje sencillo.</p>
+          <ul class="sub">
+            <li>"Hoy toca regar" o "hoy no riegues", sin adivinar</li>
+            <li>Cuánta agua aplicar, en litros por m² o en pipas</li>
+            <li>Avisos de plagas sin recetar ningún producto</li>
+            <li>Anota lo que de verdad regaste, para tu técnico</li>
+          </ul>
+        </div>
       </div>
-    </div>
+    </section>
 
-    <h2 id="comofunciona-anchor" style="font-size:24px;text-align:center;margin:40px 0 20px">Cómo funciona</h2>
-    <div class="stepsrow">
-      <div class="stepcard"><div class="stepnum">1</div><h4>Registra tu lote</h4><p class="sub">Nombre, cultivo, hectáreas, suelo y cómo riegas.</p></div>
-      <div class="stepcard"><div class="stepnum">2</div><h4>Revisa el resumen</h4><p class="sub">El dashboard ordena qué lote necesita agua o tiene riesgo de plagas hoy.</p></div>
-      <div class="stepcard"><div class="stepnum">3</div><h4>Tu técnico valida</h4><p class="sub">Ninguna recomendación es definitiva sin su revisión.</p></div>
-    </div>
-
-    <h2 style="font-size:24px;text-align:center;margin:40px 0 20px">Lo que resuelve</h2>
-    <div class="featuregrid">
-      <div class="ftile"><div class="icwrap water"><svg class="ic" aria-hidden="true"><use href="#i-drop"/></svg></div><h3>Sabes si hoy toca regar</h3><p class="sub">Y cuánta agua, en litros por m² o en pipas, comparado contra tu calendario de siempre.</p></div>
-      <div class="ftile"><div class="icwrap bad"><svg class="ic" aria-hidden="true"><use href="#i-bug"/></svg></div><h3>Vigilas plagas sin adivinar</h3><p class="sub">Avisos de monitoreo para tizón tardío, mosquita blanca y palomilla del tomate; nunca receta un producto.</p></div>
-      <div class="ftile"><div class="icwrap leaf"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></div><h3>Tu técnico valida todo</h3><p class="sub">Ninguna recomendación llega al productor como definitiva sin que un técnico la revise primero.</p></div>
-    </div>
-
-    <div class="card" style="margin-top:18px">
-      <h2 style="font-size:20px">Pensado para crecer</h2>
-      <p class="sub" style="margin-top:4px">Hoy el simulador está calibrado para jitomate. La arquitectura ya está lista para sumar más cultivos de exportación de la región, cuando se co-diseñe su modelo con un agrónomo especialista.</p>
-      <div class="croprow" id="landCropRow"></div>
-    </div>
-
-    <div class="closecta" style="margin-top:36px">
-      <div class="eyebrow">Pruébalo ahora</div>
-      <h2>Decide con datos, <span class="hl">no a ciegas</span></h2>
-      <p>Sin servidor, sin instalar nada: abre el archivo y entra con tu correo.</p>
-      <div class="landctas">
-        <button class="btn" id="landingStart2" type="button">Ver mis lotes</button>
-        <button class="btn ghost" id="landingDemo2" type="button">Ver demo con datos de ejemplo</button>
+    <section class="landsection" id="comofunciona-anchor">
+      <div class="landsection-head">
+        <h2>Cómo funciona</h2>
+        <p class="sub">Tres pasos, del registro a la validación.</p>
       </div>
-    </div>
+      <div class="stepsrow">
+        <div class="stepcard"><div class="stepnum">1</div><h4>Registra tu lote</h4><p class="sub">Nombre, cultivo, hectáreas, suelo y cómo riegas.</p></div>
+        <div class="stepcard"><div class="stepnum">2</div><h4>Revisa el resumen</h4><p class="sub">El dashboard ordena qué lote necesita agua o tiene riesgo de plagas hoy.</p></div>
+        <div class="stepcard"><div class="stepnum">3</div><h4>Tu técnico valida</h4><p class="sub">Ninguna recomendación es definitiva sin su revisión.</p></div>
+      </div>
+    </section>
 
-    <div class="note" style="margin-top:28px"><svg class="ic" aria-hidden="true"><use href="#i-info"/></svg><p><b>Demostración con datos de ejemplo.</b> No necesita servidor: corre entera en tu navegador.</p></div>
+    <section class="landsection" id="resuelve-anchor">
+      <div class="landsection-head">
+        <h2>Lo que resuelve</h2>
+      </div>
+      <div class="featuregrid">
+        <div class="ftile"><div class="icwrap water"><svg class="ic" aria-hidden="true"><use href="#i-drop"/></svg></div><h3>Sabes si hoy toca regar</h3><p class="sub">Y cuánta agua, en litros por m² o en pipas, comparado contra tu calendario de siempre.</p></div>
+        <div class="ftile"><div class="icwrap bad"><svg class="ic" aria-hidden="true"><use href="#i-bug"/></svg></div><h3>Vigilas plagas sin adivinar</h3><p class="sub">Avisos de monitoreo para tizón tardío, mosquita blanca y palomilla del tomate; nunca receta un producto.</p></div>
+        <div class="ftile"><div class="icwrap leaf"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></div><h3>Tu técnico valida todo</h3><p class="sub">Ninguna recomendación llega al productor como definitiva sin que un técnico la revise primero.</p></div>
+      </div>
+    </section>
 
-    <div class="landfoot">
+    <section class="landsection" id="crecer-anchor">
+      <div class="card">
+        <h2 style="font-size:20px">Pensado para crecer</h2>
+        <p class="sub" style="margin-top:4px">Hoy el simulador está calibrado para jitomate. La arquitectura ya está lista para sumar más cultivos de exportación de la región, cuando se co-diseñe su modelo con un agrónomo especialista.</p>
+        <div class="croprow" id="landCropRow"></div>
+      </div>
+    </section>
+
+    <section class="landsection">
+      <div class="closecta">
+        <div class="eyebrow">Pruébalo ahora</div>
+        <h2>Decide con datos, <span class="hl">no a ciegas</span></h2>
+        <p>Sin servidor, sin instalar nada: abre el archivo y entra con tu correo.</p>
+        <div class="landctas">
+          <button class="btn" id="landingStart2" type="button">Ver mis lotes</button>
+          <button class="btn ghost" id="landingDemo2" type="button">Ver demo con datos de ejemplo</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="landsection">
+      <div class="note"><svg class="ic" aria-hidden="true"><use href="#i-info"/></svg><p><b>Demostración con datos de ejemplo.</b> No necesita servidor: corre entera en tu navegador.</p></div>
+    </section>
+
+    <footer class="landfoot">
       <div class="landfoot-grid">
         <div>
           <div class="brand" style="font-size:18px;margin-bottom:8px"><svg class="ic" aria-hidden="true"><use href="#i-leaf"/></svg><span>Mi lote de jitomate</span></div>
@@ -394,8 +429,8 @@ td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
         </div>
         <div>
           <h5>Producto</h5>
-          <a href="#comofunciona-anchor" id="footHow">Cómo funciona</a>
-          <a href="#paraquien-anchor" id="footWho">Para quién es</a>
+          <a href="#comofunciona-anchor">Cómo funciona</a>
+          <a href="#paraquien-anchor">Para quién es</a>
           <a href="manual-usuario.pdf" target="_blank" rel="noopener">Manual de usuario (PDF)</a>
         </div>
         <div>
@@ -407,8 +442,8 @@ td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
         <span>© 2026 Mi lote de jitomate — demo de hackatón.</span>
         <span>Hecho para el valle Cuautla–Ayala–Yautepec, Morelos.</span>
       </div>
-    </div>
-  </div>
+    </footer>
+  </main>
 </div>
 
 <!-- ====== ACCESO: INICIAR SESIÓN / CREAR CUENTA ====== -->
