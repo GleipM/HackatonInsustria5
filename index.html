@@ -9,15 +9,15 @@
 <style>
 :root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
 --bg:#f6f4ea;--surface:#ffffff;--ink:#33392f;--muted:#6f7760;--line:#ddd7c4;--field:#f1efe3;
---water:#3f7486;--on-water:#ffffff;--leaf:#5e8f5b;--leaf-soft:#e7efe0;--warn:#96682b;--warn-soft:#f5ead2;--bad:#ad5c4d;--bad-soft:#f5e2dc;--ok:#5e8f5b;
+--water:#3f7486;--on-water:#ffffff;--water-soft:#e3edf0;--leaf:#5e8f5b;--leaf-soft:#e7efe0;--warn:#96682b;--warn-soft:#f5ead2;--bad:#ad5c4d;--bad-soft:#f5e2dc;--ok:#5e8f5b;
 --c-cal:#c98a4b;--c-bal:#3f7486;--c-def:#8a6fa0;--p-tiz:#a05a78;--p-mos:#ab8f3a;--p-tuta:#4a8f7a;
 --band-ok:#5e8f5b1a;--band-warn:#96682b22;--band-bad:#ad5c4d22;--shadow:0 1px 2px #33392f14,0 4px 14px #33392f10}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1c2018;--surface:#262b20;--ink:#ece7d9;--muted:#b4af9c;--line:#3a4030;--field:#20241b;
---water:#7fa8bd;--on-water:#10181c;--leaf:#8fbf86;--leaf-soft:#253325;--warn:#e0b868;--warn-soft:#3a2f16;--bad:#d98f82;--bad-soft:#3a2420;--ok:#8fbf86;
+--water:#7fa8bd;--on-water:#10181c;--water-soft:#1d2d33;--leaf:#8fbf86;--leaf-soft:#253325;--warn:#e0b868;--warn-soft:#3a2f16;--bad:#d98f82;--bad-soft:#3a2420;--ok:#8fbf86;
 --c-cal:#d9a564;--c-bal:#7fa8bd;--c-def:#b49bc7;--p-tiz:#c98aa5;--p-mos:#d4bc6e;--p-tuta:#7fbfab;
 --band-ok:#8fbf8618;--band-warn:#e0b86822;--band-bad:#d98f8224;--shadow:none}}
 :root[data-theme="dark"]{--bg:#1c2018;--surface:#262b20;--ink:#ece7d9;--muted:#b4af9c;--line:#3a4030;--field:#20241b;
---water:#7fa8bd;--on-water:#10181c;--leaf:#8fbf86;--leaf-soft:#253325;--warn:#e0b868;--warn-soft:#3a2f16;--bad:#d98f82;--bad-soft:#3a2420;--ok:#8fbf86;
+--water:#7fa8bd;--on-water:#10181c;--water-soft:#1d2d33;--leaf:#8fbf86;--leaf-soft:#253325;--warn:#e0b868;--warn-soft:#3a2f16;--bad:#d98f82;--bad-soft:#3a2420;--ok:#8fbf86;
 --c-cal:#d9a564;--c-bal:#7fa8bd;--c-def:#b49bc7;--p-tiz:#c98aa5;--p-mos:#d4bc6e;--p-tuta:#7fbfab;
 --band-ok:#8fbf8618;--band-warn:#e0b86822;--band-bad:#d98f8224;--shadow:none}
 *,*::before,*::after{box-sizing:border-box}
@@ -185,6 +185,31 @@ td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
  #view-prod>.card{margin-bottom:0}
  #lote,#pNavCard,#pRiegoCard,.help{grid-column:1/-1}
 }
+/* landing */
+.landhero{background:linear-gradient(180deg,var(--leaf-soft) 0%,var(--bg) 100%)}
+.landhero .wrap{padding-top:14px;padding-bottom:28px}
+.landhero-content{max-width:620px;margin:30px auto 0;text-align:center}
+.landbadge{display:inline-flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:6px 16px;font-size:14px;font-weight:700;color:var(--leaf);box-shadow:var(--shadow)}
+.landbadge .ic{width:16px;height:16px}
+.landhero-content h1{font-size:32px;margin-top:18px;line-height:1.15}
+.landhero-content .sub{font-size:18px;margin-top:12px}
+.landctas{margin-top:24px}
+.landctas .btn{padding:14px 28px;font-size:17px}
+.landstats{display:flex;flex-wrap:wrap;gap:10px 22px;justify-content:center;margin-top:28px;font-size:14px;color:var(--muted)}
+.landstats span{display:inline-flex;align-items:center;gap:6px}
+.landstats .ic{width:17px;height:17px;color:var(--leaf)}
+.featuregrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;margin-top:4px}
+.ftile{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:var(--shadow)}
+.ftile .icwrap{width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:14px}
+.ftile .icwrap .ic{width:26px;height:26px}
+.ftile .icwrap.water{background:var(--water-soft);color:var(--water)}
+.ftile .icwrap.bad{background:var(--bad-soft);color:var(--bad)}
+.ftile .icwrap.leaf{background:var(--leaf-soft);color:var(--leaf)}
+.ftile h3{font-size:18px;margin-bottom:6px}
+.croprow{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.cropchip{display:inline-flex;align-items:center;gap:7px;border-radius:999px;padding:7px 15px;font-size:14.5px;font-weight:700;border:1.5px solid var(--line);background:var(--field);color:var(--muted)}
+.cropchip.active{border-color:var(--leaf);background:var(--leaf-soft);color:var(--leaf)}
+@media (min-width:640px){.landhero-content h1{font-size:42px}.landhero .wrap{padding-top:22px;padding-bottom:46px}.landhero-content{margin-top:40px}}
 </style>
 </head>
 <body>
@@ -207,24 +232,44 @@ td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
 </svg>
 
 <!-- ====== LANDING ====== -->
-<div class="wrap" id="landingWrap">
-  <div class="topbar">
-    <div class="brand"><svg class="ic" aria-hidden="true"><use href="#i-leaf"/></svg><span>Mi lote de jitomate</span></div>
-    <button id="themeToggle3" class="btn ghost iconbtn" type="button" aria-label="Cambiar a modo oscuro">
-      <svg class="ic" aria-hidden="true"><use href="#i-moon" id="themeIconUse3"/></svg>
-    </button>
+<div id="landingWrap">
+  <div class="landhero">
+    <div class="wrap">
+      <div class="topbar">
+        <div class="brand"><svg class="ic" aria-hidden="true"><use href="#i-leaf"/></svg><span>Mi lote de jitomate</span></div>
+        <button id="themeToggle3" class="btn ghost iconbtn" type="button" aria-label="Cambiar a modo oscuro">
+          <svg class="ic" aria-hidden="true"><use href="#i-moon" id="themeIconUse3"/></svg>
+        </button>
+      </div>
+      <div class="landhero-content">
+        <span class="landbadge"><svg class="ic" aria-hidden="true"><use href="#i-leaf"/></svg>Valle Cuautla–Ayala–Yautepec, Morelos</span>
+        <h1>Riego y plagas, sin adivinar</h1>
+        <p class="sub">Simulador de riego y monitoreo de plagas para jitomate, con cada recomendación pendiente de validar por un técnico — y arquitectura lista para crecer a más cultivos de exportación de Morelos.</p>
+        <div class="landctas"><button class="btn" id="landingStart" type="button">Ver mis lotes</button></div>
+        <div class="landstats">
+          <span><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>ETo con método FAO-56</span>
+          <span><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>3 índices de plagas</span>
+          <span><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Validación técnica obligatoria</span>
+        </div>
+      </div>
+    </div>
   </div>
-  <div class="card" style="text-align:center">
-    <h1 style="font-size:28px">Riego y plagas, sin adivinar</h1>
-    <p class="sub" style="font-size:17px;margin-top:10px">Simulador para jitomate del valle Cuautla–Ayala–Yautepec, Morelos — pensado para crecer a nopal, elote y otros cultivos de exportación de la región.</p>
-    <button class="btn" id="landingStart" type="button" style="margin-top:18px">Ver mis lotes</button>
+
+  <div class="wrap">
+    <div class="featuregrid">
+      <div class="ftile"><div class="icwrap water"><svg class="ic" aria-hidden="true"><use href="#i-drop"/></svg></div><h3>Sabes si hoy toca regar</h3><p class="sub">Y cuánta agua, en litros por m² o en pipas, comparado contra tu calendario de siempre.</p></div>
+      <div class="ftile"><div class="icwrap bad"><svg class="ic" aria-hidden="true"><use href="#i-bug"/></svg></div><h3>Vigilas plagas sin adivinar</h3><p class="sub">Avisos de monitoreo para tizón tardío, mosquita blanca y palomilla del tomate; nunca receta un producto.</p></div>
+      <div class="ftile"><div class="icwrap leaf"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg></div><h3>Tu técnico valida todo</h3><p class="sub">Ninguna recomendación llega al productor como definitiva sin que un técnico la revise primero.</p></div>
+    </div>
+
+    <div class="card" style="margin-top:18px">
+      <h2 style="font-size:20px">Pensado para crecer</h2>
+      <p class="sub" style="margin-top:4px">Hoy el simulador está calibrado para jitomate. La arquitectura ya está lista para sumar más cultivos de exportación de la región, cuando se co-diseñe su modelo con un agrónomo especialista.</p>
+      <div class="croprow" id="landCropRow"></div>
+    </div>
+
+    <div class="note" style="margin-top:18px"><svg class="ic" aria-hidden="true"><use href="#i-info"/></svg><p><b>Demostración con datos de ejemplo.</b> No necesita servidor: corre entera en tu navegador.</p></div>
   </div>
-  <div class="card">
-    <div style="display:flex;gap:14px;align-items:flex-start;margin-bottom:16px"><svg class="ic lg" aria-hidden="true" style="color:var(--water)"><use href="#i-drop"/></svg><div><b>Sabes si hoy toca regar</b><p class="sub">Y cuánta agua, en litros por m² o en pipas, comparado contra tu calendario de siempre.</p></div></div>
-    <div style="display:flex;gap:14px;align-items:flex-start;margin-bottom:16px"><svg class="ic lg" aria-hidden="true" style="color:var(--bad)"><use href="#i-bug"/></svg><div><b>Vigilas plagas sin adivinar</b><p class="sub">Avisos de monitoreo para tizón tardío, mosquita blanca y palomilla del tomate; nunca receta un producto.</p></div></div>
-    <div style="display:flex;gap:14px;align-items:flex-start"><svg class="ic lg" aria-hidden="true" style="color:var(--leaf)"><use href="#i-check"/></svg><div><b>Tu técnico valida todo</b><p class="sub">Ninguna recomendación llega al productor como definitiva sin que un técnico la revise primero.</p></div></div>
-  </div>
-  <div class="note"><svg class="ic" aria-hidden="true"><use href="#i-info"/></svg><p><b>Demostración con datos de ejemplo.</b></p></div>
 </div>
 
 <!-- ====== ACCESO: INICIAR SESIÓN / CREAR CUENTA ====== -->
@@ -1056,6 +1101,7 @@ $("dashCards").onclick=e=>{const b=e.target.closest("[data-dashopen]");if(b)ente
 /* ---- pestaña mis lotes: alta/edición/baja ---- */
 function cultivoOptionsHTML(){return Object.keys(CULTIVOS).map(k=>{const c=CULTIVOS[k];return `<option value="${k}"${c.disponible?"":" disabled"}>${esc(c.label)}${c.disponible?"":" (próximamente)"}</option>`}).join("")}
 $("lfCultivo").innerHTML=cultivoOptionsHTML();
+$("landCropRow").innerHTML=Object.keys(CULTIVOS).map(k=>{const c=CULTIVOS[k];return `<span class="cropchip${c.disponible?" active":""}">${ic(c.disponible?"check":"clock","sm")}${esc(c.label)}${c.disponible?"":" · próximamente"}</span>`}).join("");
 
 function renderLoteList(){
  const a=currentAcc();
